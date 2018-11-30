@@ -111,25 +111,6 @@ namespace Ivony.Http.Pipeline
 
 
 
-    /// <summary>
-    /// 重写请求的 Host 属性
-    /// </summary>
-    /// <param name="middleware">上游管线</param>
-    /// <param name="host">要重写的主机头</param>
-    /// <returns>请求处理管线</returns>
-    public static IHttpPipelineMiddleware RewriteHost( this IHttpPipelineMiddleware middleware, string host )
-    {
-      return middleware.Pipe( new HttpRequestFilter( request =>
-      {
-        var url = new UriBuilder( request.RequestUri )
-        {
-          Host = host
-        };
-
-        request.RequestUri = url.Uri;
-        return request;
-      } ) );
-    }
 
 
 
@@ -141,7 +122,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>完整的处理管线</returns>
     public static IHttpPipeline Emit( this IHttpPipelineMiddleware middleware )
     {
-      return middleware.Pipe( new HttpEmitter() );
+      return middleware.Pipe( new HttpPipelineEmitter() );
     }
 
 

@@ -10,10 +10,10 @@ namespace Ivony.Http.Pipeline
   /// <summary>
   /// HTTP 请求发送，只负责发送 HTTP 请求。
   /// </summary>
-  public class HttpEmitter : IHttpPipeline
+  public class HttpPipelineEmitter : IHttpPipeline
   {
 
-    HttpClient client = new HttpClient();
+    HttpClient client = new HttpClient( new HttpClientHandler { AllowAutoRedirect = false, AutomaticDecompression = System.Net.DecompressionMethods.None } );
 
     /// <summary>
     /// 实现 ProcessRequest 方法，发送 HTTP 请求并将响应返回
@@ -22,6 +22,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>响应信息</returns>
     public Task<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
     {
+      request.Headers.Host = request.RequestUri.Host;
       return client.SendAsync( request );
     }
   }

@@ -1,8 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 
 namespace Ivony.Http.Pipeline
 {
@@ -32,18 +35,38 @@ namespace Ivony.Http.Pipeline
 
       return continuation => async context =>
       {
+
         var request = CreateRequest( context );
 
         var response = await _pipeline.ProcessRequest( request );
 
-        ApplyResponse( context, response );
+        await ApplyResponse( context, response );
       };
 
     }
 
-    protected virtual void ApplyResponse( HttpContext context, HttpResponseMessage response )
+    protected virtual async Task ApplyResponse( HttpContext context, HttpResponseMessage response )
     {
-      throw new NotImplementedException();
+
+      context.Response.StatusCode = (int) response.StatusCode;
+      context.Response.Headers.Clear();
+
+
+      foreach ( var item in response.Headers )
+      {
+        if ( item.Key == "Connection" )
+          continue;
+
+        if ( item.Key == "Transfer-Encoding" )
+          continue;
+
+        context.Response.Headers.Add( item.Key, new StringValues( item.Value.ToArray() ) );
+      }
+
+      foreach ( var item in response.Content.Headers )
+        context.Response.Headers.Add( item.Key, new StringValues( item.Value.ToArray() ) );
+
+      await response.Content.CopyToAsync( context.Response.Body );
     }
 
     protected virtual HttpRequestMessage CreateRequest( HttpContext context )
@@ -52,17 +75,28 @@ namespace Ivony.Http.Pipeline
       foreach ( var item in context.Request.Headers )
         request.Headers.Add( item.Key, item.Value.AsEnumerable() );
 
-      request.Content = new StreamContent( context.Request.Body );
+      /*    
+      var stream = new MemoryStream();
+      context.Request.Body.CopyTo( stream );
+      stream.Seek( 0, SeekOrigin.Begin );
+
+      request.Content = new StreamContent( stream );
+      */
       request.Properties[HttpContextAccessKey] = context;
 
       return request;
-
-
     }
 
     protected virtual Uri CreateUri( HttpRequest request )
     {
-      throw new NotImplementedException();
+      return new UriBuilder
+      {
+        Scheme = request.Scheme,
+        Host = request.Host.Host,
+        Port = request.Host.Port.Value,
+        Path = request.Path,
+        Query = request.QueryString.Value,
+      }.Uri;
     }
   }
 }

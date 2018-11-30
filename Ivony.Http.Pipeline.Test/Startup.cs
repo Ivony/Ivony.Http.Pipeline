@@ -22,12 +22,11 @@ namespace Ivony.Http.Pipeline.Test
     {
 
       app.UsePipeline( builder =>
-       {
-         builder
-           .UseForwardedProxy()
-           .Emit();
-       } );
-
+      {
+        builder
+          .RewriteHost( "www.niunan.net" )
+          .Emit();
+      } );
 
 
 
