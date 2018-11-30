@@ -9,7 +9,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace Ivony.Http.Pipeline
 {
-  public class HttpPipelineBuilder : IHttpPipelineMiddleware
+  public class HttpPipelineBuilder : IHttpPipeline
   {
 
 

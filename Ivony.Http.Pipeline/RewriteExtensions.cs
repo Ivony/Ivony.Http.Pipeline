@@ -13,7 +13,7 @@ namespace Ivony.Http.Pipeline
     /// <param name="middleware">上游管线</param>
     /// <param name="host">要重写的主机头</param>
     /// <returns>请求处理管线</returns>
-    public static IHttpPipelineMiddleware RewriteHost( this IHttpPipelineMiddleware middleware, string host )
+    public static IHttpPipeline RewriteHost( this IHttpPipeline middleware, string host )
     {
       return RewriteHost( middleware, new HostString( host ) );
     }
@@ -25,7 +25,7 @@ namespace Ivony.Http.Pipeline
     /// <param name="middleware">上游管线</param>
     /// <param name="host">要重写的主机头</param>
     /// <returns>请求处理管线</returns>
-    public static IHttpPipelineMiddleware RewriteHost( this IHttpPipelineMiddleware middleware, HostString host )
+    public static IHttpPipeline RewriteHost( this IHttpPipeline middleware, HostString host )
     {
       return middleware.Pipe( new HttpRequestFilter( request =>
       {

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline
 {
-  public class HttpRequestFilter : HttpPipelineMiddleware
+  public class HttpRequestFilter : HttpPipeline
   {
     private readonly Func<HttpRequestMessage, HttpRequestMessage> _func;
 
@@ -13,11 +13,11 @@ namespace Ivony.Http.Pipeline
       _func = func ?? throw new ArgumentNullException( nameof( func ) );
     }
 
-    protected override Task<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, HttpPipelineHandler nextPipeline )
+    protected override Task<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
     {
 
       request = _func( request );
-      return nextPipeline( request );
+      return base.ProcessRequest( request );
 
     }
   }

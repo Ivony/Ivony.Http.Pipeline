@@ -17,16 +17,9 @@ namespace Ivony.Http.Pipeline
 
     public HttpPipelineRouteRule[] Rules { get; }
 
-    public Task<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+    public HttpPipelineHandler Pipe( HttpPipelineHandler handler )
     {
-
-      foreach ( var rule in Rules )
-      {
-        if ( rule.CheckCondition( request ) )
-          return rule.ProcessRequest( request );
-      }
-
-      return DefaultResponse( request );
+      throw new NotImplementedException();
     }
 
     protected virtual Task<HttpResponseMessage> DefaultResponse( HttpRequestMessage request )
