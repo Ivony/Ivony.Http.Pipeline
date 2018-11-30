@@ -23,11 +23,9 @@ namespace Ivony.Http.Pipeline.Test
 
       app.UsePipeline( builder =>
        {
-         builder.UseLoadBalancer(
-           route => route.RewriteHost( "10.0.1.1" ).Emit(),
-           route => route.RewriteHost( "10.0.1.2" ).Emit(),
-           route => route.RewriteHost( "10.0.1.3" ).Emit()
-           );
+         builder
+           .UseForwardedProxy()
+           .Emit();
        } );
 
 

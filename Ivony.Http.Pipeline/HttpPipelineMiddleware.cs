@@ -12,6 +12,7 @@ namespace Ivony.Http.Pipeline
   /// </summary>
   public abstract class HttpPipelineMiddleware : IHttpPipelineMiddleware
   {
+
     /// <summary>
     /// 实现 Pipe 方法，将当前中间件接入到管线中
     /// </summary>

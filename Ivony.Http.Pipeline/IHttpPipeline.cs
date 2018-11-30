@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline
 {
+
+  /// <summary>
+  /// 定义一个 HTTP 请求处理管线
+  /// </summary>
   public interface IHttpPipeline
   {
 
