@@ -15,7 +15,7 @@
       this.nextMiddleware = nextMiddleware;
     }
 
-    IHttpPipeline IHttpPipelineMiddleware.Pipe( IHttpPipeline pipeline )
+    HttpPipelineHandler IHttpPipelineMiddleware.Pipe( HttpPipelineHandler pipeline )
     {
       return middleware.Pipe( nextMiddleware.Pipe( pipeline ) );
     }

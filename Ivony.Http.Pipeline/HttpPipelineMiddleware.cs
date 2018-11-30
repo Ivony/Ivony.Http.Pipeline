@@ -18,12 +18,12 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="pipeline">下游管线</param>
     /// <returns>接入了当前中间件的管线</returns>
-    public IHttpPipeline Pipe( IHttpPipeline pipeline )
+    public HttpPipelineHandler Pipe( HttpPipelineHandler pipeline )
     {
-      return new Pipeline( request => ProcessRequest( request, pipeline ) );
+      return request => ProcessRequest( request, pipeline );
     }
 
-    protected abstract Task<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, IHttpPipeline nextPipeline );
+    protected abstract Task<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, HttpPipelineHandler nextPipeline );
 
 
     private class Pipeline : IHttpPipeline

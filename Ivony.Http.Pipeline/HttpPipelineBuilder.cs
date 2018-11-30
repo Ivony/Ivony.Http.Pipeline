@@ -17,9 +17,9 @@ namespace Ivony.Http.Pipeline
     internal static readonly string HttpContextAccessKey = "__HttpContext";
 
 
-    private IHttpPipeline _pipeline;
+    private HttpPipelineHandler _pipeline;
 
-    public IHttpPipeline Pipe( IHttpPipeline pipeline )
+    public HttpPipelineHandler Pipe( HttpPipelineHandler pipeline )
     {
       return _pipeline = pipeline;
     }
@@ -38,7 +38,7 @@ namespace Ivony.Http.Pipeline
 
         var request = CreateRequest( context );
 
-        var response = await _pipeline.ProcessRequest( request );
+        var response = await _pipeline( request );
 
         await ApplyResponse( context, response );
       };
@@ -75,13 +75,7 @@ namespace Ivony.Http.Pipeline
       foreach ( var item in context.Request.Headers )
         request.Headers.Add( item.Key, item.Value.AsEnumerable() );
 
-      /*    
-      var stream = new MemoryStream();
-      context.Request.Body.CopyTo( stream );
-      stream.Seek( 0, SeekOrigin.Begin );
-
-      request.Content = new StreamContent( stream );
-      */
+      request.Content = new StreamContent( context.Request.Body );
       request.Properties[HttpContextAccessKey] = context;
 
       return request;

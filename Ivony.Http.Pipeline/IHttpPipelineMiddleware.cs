@@ -11,7 +11,7 @@ namespace Ivony.Http.Pipeline
   public interface IHttpPipelineMiddleware
   {
 
-    IHttpPipeline Pipe( IHttpPipeline pipeline );
+    HttpPipelineHandler Pipe( HttpPipelineHandler handler );
 
   }
 }

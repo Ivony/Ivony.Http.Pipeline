@@ -13,7 +13,18 @@ namespace Ivony.Http.Pipeline
   public class HttpPipelineEmitter : IHttpPipeline
   {
 
-    HttpClient client = new HttpClient( new HttpClientHandler { AllowAutoRedirect = false, AutomaticDecompression = System.Net.DecompressionMethods.None } );
+
+    public HttpPipelineEmitter()
+    {
+      _client = new HttpClient( new HttpClientHandler { AllowAutoRedirect = false, AutomaticDecompression = System.Net.DecompressionMethods.None, UseCookies = false } );
+    }
+
+    public HttpPipelineEmitter( HttpClient client )
+    {
+      _client = client;
+    }
+
+    HttpClient _client;
 
     /// <summary>
     /// 实现 ProcessRequest 方法，发送 HTTP 请求并将响应返回
@@ -23,7 +34,7 @@ namespace Ivony.Http.Pipeline
     public Task<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
     {
       request.Headers.Host = request.RequestUri.Host;
-      return client.SendAsync( request );
+      return _client.SendAsync( request );
     }
   }
 }

@@ -19,6 +19,14 @@ namespace Ivony.Http.Pipeline
   {
 
 
+
+
+    public static HttpPipelineHandler Pipe( this IHttpPipelineMiddleware middleware, IHttpPipeline pipeline )
+    {
+      return middleware.Pipe( pipeline.ProcessRequest );
+    }
+
+
     /// <summary>
     /// 接入一个管线中间件
     /// </summary>
@@ -37,7 +45,7 @@ namespace Ivony.Http.Pipeline
     /// <param name="middleware">上游管线</param>
     /// <param name="nextMiddleware">要接入的中间件</param>
     /// <returns>请求处理管线</returns>
-    public static IHttpPipelineMiddleware Pipe( this IHttpPipelineMiddleware middleware, Func<Func<HttpRequestMessage, Task<HttpResponseMessage>>, Func<HttpRequestMessage, Task<HttpResponseMessage>>> next )
+    public static IHttpPipelineMiddleware Pipe( this IHttpPipelineMiddleware middleware, Func<HttpPipelineHandler, HttpPipelineHandler> next )
     {
       return new HttpPipelineMiddlewareLink( middleware, new Middleware( next ) );
     }
@@ -45,16 +53,16 @@ namespace Ivony.Http.Pipeline
 
     private class Middleware : IHttpPipelineMiddleware
     {
-      private readonly Func<Func<HttpRequestMessage, Task<HttpResponseMessage>>, Func<HttpRequestMessage, Task<HttpResponseMessage>>> _middleware;
+      private readonly Func<HttpPipelineHandler, HttpPipelineHandler> _middleware;
 
-      public Middleware( Func<Func<HttpRequestMessage, Task<HttpResponseMessage>>, Func<HttpRequestMessage, Task<HttpResponseMessage>>> middleware )
+      public Middleware( Func<HttpPipelineHandler, HttpPipelineHandler> middleware )
       {
         _middleware = middleware;
       }
 
-      public IHttpPipeline Pipe( IHttpPipeline pipeline )
+      public HttpPipelineHandler Pipe( HttpPipelineHandler handler )
       {
-        return new Pipeline( _middleware( pipeline.ProcessRequest ) );
+        return _middleware( handler );
       }
     }
 
@@ -80,9 +88,9 @@ namespace Ivony.Http.Pipeline
     /// <param name="middleware">上游管线</param>
     /// <param name="pipelines">下游管线列表</param>
     /// <returns>请求处理管线</returns>
-    public static IHttpPipeline UseLoadBalancer( this IHttpPipelineMiddleware middleware, params Func<IHttpPipelineMiddleware, IHttpPipeline>[] pipelines )
+    public static HttpPipelineHandler UseLoadBalancer( this IHttpPipelineMiddleware middleware, params Func<IHttpPipelineMiddleware, IHttpPipeline>[] pipelines )
     {
-      return middleware.Pipe( new HttpPipelineDispatcher( pipelines.Select( func => func( new HttpPipelineBuilder() ) ).ToArray() ) );
+      return middleware.Pipe( new HttpPipelineDispatcher( pipelines.Select( func => func( new HttpPipelineBuilder() ) ).ToArray() ).ProcessRequest );
     }
 
 
@@ -120,7 +128,7 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="middleware">上游管线</param>
     /// <returns>完整的处理管线</returns>
-    public static IHttpPipeline Emit( this IHttpPipelineMiddleware middleware )
+    public static HttpPipelineHandler Emit( this IHttpPipelineMiddleware middleware )
     {
       return middleware.Pipe( new HttpPipelineEmitter() );
     }
