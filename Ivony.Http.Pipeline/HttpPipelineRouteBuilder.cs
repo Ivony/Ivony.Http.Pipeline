@@ -17,20 +17,10 @@ namespace Ivony.Http.Pipeline
     /// 添加路由规则
     /// </summary>
     /// <param name="condition"></param>
-    /// <param name="pipelineFactory"></param>
-    public HttpPipelineRouteBuilder AddRule( Func<HttpRequestMessage, HttpPipelineRouteData> router, Func<IHttpPipeline, IHttpRoutePipeline> pipelineFactory )
-    {
-      return AddRule( router, pipelineFactory( HttpPipeline.Blank ) );
-    }
-
-    /// <summary>
-    /// 添加路由规则
-    /// </summary>
-    /// <param name="condition"></param>
     /// <param name="pipeline"></param>
-    public HttpPipelineRouteBuilder AddRule( Func<HttpRequestMessage, HttpPipelineRouteData> router, IHttpRoutePipeline pipeline )
+    public HttpPipelineRouteBuilder AddRule( IHttpPipelineRouteRule routeRule )
     {
-      rules.Add( (router, pipeline) );
+      rules.Add( routeRule );
 
       return this;
     }
@@ -40,8 +30,8 @@ namespace Ivony.Http.Pipeline
 
     public HttpPipelineRouteBuilder MapPath( string sourcePathTemplate, string targetPathTemplate )
     {
-      var source = new PathTemplate( sourcePathTemplate );
-      var target = new PathTemplate( targetPathTemplate );
+
+      return AddRule( new PathTemplateRewriteRule( sourcePathTemplate, targetPathTemplate ) );
 
 
 
@@ -70,12 +60,12 @@ namespace Ivony.Http.Pipeline
 
 
 
-    protected ICollection<(Func<HttpRequestMessage, HttpPipelineRouteData> router, IHttpRoutePipeline pipeline)> rules = new List<(Func<HttpRequestMessage, HttpPipelineRouteData> router, IHttpRoutePipeline pipeline)>();
+    protected ICollection<IHttpPipelineRouteRule> rules = new List<IHttpPipelineRouteRule>();
 
 
-    public HttpPipelineRouter Build()
+    public HttpPipelineRouteService Build()
     {
-      return new HttpPipelineRouter( rules.ToArray() );
+      return new HttpPipelineRouteService( rules.ToArray() );
 
     }
 

@@ -32,6 +32,17 @@ namespace Ivony.Http.Pipeline
 
 
     /// <summary>
+    /// 通过方法创建一个 IHttpPipeline 对象
+    /// </summary>
+    /// <param name="pipeline">一个处理管线方法</param>
+    /// <returns></returns>
+    public static IHttpPipeline Create( Func<HttpPipelineHandler, HttpPipelineHandler> pipeline )
+    {
+      return new PipelineWrapper( pipeline );
+    }
+
+
+    /// <summary>
     /// 派生类重写此方法处理请求
     /// </summary>
     /// <param name="request">请求信息</param>
@@ -54,6 +65,21 @@ namespace Ivony.Http.Pipeline
       public HttpPipelineHandler Pipe( HttpPipelineHandler pipeline )
       {
         return pipeline;
+      }
+    }
+
+    private class PipelineWrapper : IHttpPipeline
+    {
+      private Func<HttpPipelineHandler, HttpPipelineHandler> _pipeline;
+
+      public PipelineWrapper( Func<HttpPipelineHandler, HttpPipelineHandler> pipeline )
+      {
+        _pipeline = pipeline;
+      }
+
+      public HttpPipelineHandler Pipe( HttpPipelineHandler pipeline )
+      {
+        return _pipeline( pipeline );
       }
     }
   }
