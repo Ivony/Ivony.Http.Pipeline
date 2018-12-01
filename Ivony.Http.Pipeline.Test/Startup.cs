@@ -21,16 +21,11 @@ namespace Ivony.Http.Pipeline.Test
     public void Configure( IApplicationBuilder app, IHostingEnvironment env )
     {
 
-
-      app.UsePipeline( builder =>
-      {
-        builder
-          .Forward()
-          .RewriteHost( "www.niunan.net" )
-          .Emit();
-      } );
-
-
+      app.UsePipeline( pipeline => pipeline
+        .Forward()
+        .RewriteHost( "www.niunan.net" )
+        .Emit()
+      );
 
 
       if ( env.IsDevelopment() )

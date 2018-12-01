@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Builder.Internal;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ivony.Http.Pipeline
 {
@@ -73,6 +74,17 @@ namespace Ivony.Http.Pipeline
     }
 
     /// <summary>
+    /// 使用负载均衡器
+    /// </summary>
+    /// <param name="pipeline">上游管线</param>
+    /// <param name="pipelines">下游管线列表</param>
+    /// <returns>请求处理管线</returns>
+    public static IHttpPipeline UseLoadBalancer( this IHttpPipeline pipeline, params Func<IHttpPipeline, IHttpPipeline>[] pipelinesFactories )
+    {
+      return pipeline.Pipe( new HttpPipelineLoadBalancer( pipelinesFactories.Select( f => f( pipeline ) ).ToArray() ) );
+    }
+
+    /// <summary>
     /// 分发管线
     /// </summary>
     /// <param name="pipeline">上游管线</param>
@@ -120,6 +132,11 @@ namespace Ivony.Http.Pipeline
 
 
 
+    /// <summary>
+    /// insert a request logger to pipeline
+    /// </summary>
+    /// <param name="pipeline">HTTP pipeline</param>
+    /// <returns>new HTTP pipeline</returns>
     public static IHttpPipeline UseLogger( this IHttpPipeline pipeline )
     {
       throw new NotImplementedException();
@@ -144,7 +161,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>HttpContext object</returns>
     public static HttpContext GetHttpContext( this HttpRequestMessage request )
     {
-      if ( request.Properties.TryGetValue( HttpPipelineAspNetCoreProvider.HttpContextAccessKey, out var value ) )
+      if ( request.Properties.TryGetValue( HttpPipelineAspNetCoreService.HttpContextAccessKey, out var value ) )
         return (HttpContext) value;
 
       else
@@ -172,11 +189,10 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="application">ASP.NET Core 应用构建器</param>
     /// <param name="configure">处理管线构建程序</param>
-    public static void UsePipeline( this IApplicationBuilder application, Action<HttpPipelineAspNetCoreProvider> configure )
+    public static void UsePipeline( this IApplicationBuilder application, Func<IHttpPipeline, HttpPipelineHandler> configure )
     {
-      var builder = new HttpPipelineAspNetCoreProvider();
-      configure( builder );
-      application.Use( builder.BuildMiddleware() );
+      var pipeline = configure( Ivony.Http.Pipeline.HttpPipeline.Blank );
+      application.UsePipeline( pipeline );
     }
 
 
@@ -185,11 +201,10 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="application">ASP.NET Core 应用构建器</param>
     /// <param name="pipeline">HTTP 请求处理管线</param>
-    public static void UsePipeline( this IApplicationBuilder application, IHttpPipeline pipeline )
+    public static void UsePipeline( this IApplicationBuilder application, HttpPipelineHandler pipeline )
     {
-      var builder = new HttpPipelineAspNetCoreProvider();
-      builder.Pipe( pipeline );
-      application.Use( builder.BuildMiddleware() );
+      var service = application.ApplicationServices.GetService<IHttpPipelineAspNetCoreService>();
+      application.Use( service.CreateMiddleware( pipeline ) );
     }
 
   }

@@ -7,10 +7,18 @@ using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline
 {
+
+  /// <summary>
+  /// implement a http piieline router.
+  /// </summary>
   public class HttpPipelineRouter : IHttpPipeline
   {
 
 
+    /// <summary>
+    /// create a HttpPipelineRouter instance
+    /// </summary>
+    /// <param name="rules">route rules</param>
     public HttpPipelineRouter( params (Predicate<HttpRequestMessage> condition, IHttpPipeline pipeline)[] rules )
     {
       Rules = rules ?? throw new ArgumentNullException( nameof( rules ) );

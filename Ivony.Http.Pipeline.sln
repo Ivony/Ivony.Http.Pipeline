@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ivony.Http.Pipeline", "Ivony.Http.Pipeline\Ivony.Http.Pipeline.csproj", "{719FF47B-C156-4F2A-A89C-DA1272CD50A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ivony.Http.Pipeline", "Ivony.Http.Pipeline\Ivony.Http.Pipeline.csproj", "{719FF47B-C156-4F2A-A89C-DA1272CD50A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ivony.Http.Pipeline.Test", "Ivony.Http.Pipeline.Test\Ivony.Http.Pipeline.Test.csproj", "{EE705405-7422-496B-90B1-F35688EE1FA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ivony.Http.Pipeline.Test", "Ivony.Http.Pipeline.Test\Ivony.Http.Pipeline.Test.csproj", "{EE705405-7422-496B-90B1-F35688EE1FA9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
