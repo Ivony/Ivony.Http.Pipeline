@@ -35,7 +35,6 @@ namespace Ivony.Http.Pipeline
         {
           builder.Host = host.Host;
           builder.Port = host.Port ?? GetDefaultPort( builder.Scheme ) ?? builder.Port;
-
         }
 
 

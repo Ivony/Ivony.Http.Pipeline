@@ -10,7 +10,7 @@ namespace Ivony.Http.Pipeline
   /// <summary>
   /// HTTP 请求发射器，负责发送 HTTP 请求。
   /// </summary>
-  public class HttpPipelineEmitter
+  public class HttpPipelineEmitter : IHttpPipelineEmitter
   {
 
     public HttpPipelineEmitter()

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Ivony.Http.Pipeline
 {
@@ -19,19 +20,27 @@ namespace Ivony.Http.Pipeline
     /// create a HttpPipelineRouter instance
     /// </summary>
     /// <param name="rules">route rules</param>
-    public HttpPipelineRouter( params (Predicate<HttpRequestMessage> condition, IHttpPipeline pipeline)[] rules )
+    public HttpPipelineRouter( params (Func<HttpRequestMessage, HttpPipelineRouteData> router, IHttpRoutePipeline pipeline)[] rules )
     {
       Rules = rules ?? throw new ArgumentNullException( nameof( rules ) );
     }
 
-    public (Predicate<HttpRequestMessage> condition, IHttpPipeline pipeline)[] Rules { get; }
+    public (Func<HttpRequestMessage, HttpPipelineRouteData> router, IHttpRoutePipeline pipeline)[] Rules { get; }
 
     public HttpPipelineHandler Pipe( HttpPipelineHandler handler )
     {
 
-      var dispatcher = new HttpPipelineConditionDispatcher( Rules.Select( r => (r.condition, r.pipeline.Pipe( handler )) ).ToArray(), HandleExcept );
-      return dispatcher.AsHandler();
+      var _rules = Rules.Select( rule => (Func<HttpRequestMessage, HttpPipelineHandler>) (request =>
+      {
+        var routeData = rule.router( request );
+        if ( routeData == null )
+          return null;
 
+        else
+          return r => rule.pipeline.HandleRequest( r, routeData, handler );
+      }) ).ToArray();
+
+      return new HttpPipelineConditionDispatcher( _rules, HandleExcept ).AsHandler();
     }
 
     private Task<HttpResponseMessage> HandleExcept( HttpRequestMessage request )
