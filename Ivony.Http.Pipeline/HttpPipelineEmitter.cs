@@ -8,11 +8,10 @@ namespace Ivony.Http.Pipeline
 {
 
   /// <summary>
-  /// HTTP 请求发送，只负责发送 HTTP 请求。
+  /// HTTP 请求发射器，负责发送 HTTP 请求。
   /// </summary>
   public class HttpPipelineEmitter
   {
-
 
     public HttpPipelineEmitter()
     {
@@ -31,19 +30,25 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="request">要发送的请求</param>
     /// <returns>响应信息</returns>
-    public Task<HttpResponseMessage> EmitRequest( HttpRequestMessage request )
+    public async Task<HttpResponseMessage> EmitRequest( HttpRequestMessage request )
     {
       request.Headers.Host = request.RequestUri.Host;
-      return _client.SendAsync( request );
+      var response = await _client.SendAsync( request );
+
+
+      response.Headers.TransferEncodingChunked = null;
+      response.Headers.ConnectionClose = null;
+
+      return response;
     }
 
 
 
 
-    public static implicit operator HttpPipelineHandler ( HttpPipelineEmitter emitter )
+    public static implicit operator HttpPipelineHandler( HttpPipelineEmitter emitter )
     {
       return emitter.EmitRequest;
     }
 
-}
+  }
 }

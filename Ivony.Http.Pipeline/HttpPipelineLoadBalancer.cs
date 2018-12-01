@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline
 {
+
+  /// <summary>
+  /// 负载均衡器
+  /// </summary>
   public class HttpPipelineLoadBalancer : IHttpPipeline
   {
     private readonly IHttpPipeline[] _pipelines;
@@ -22,9 +26,8 @@ namespace Ivony.Http.Pipeline
 
     public HttpPipelineHandler Pipe( HttpPipelineHandler handler )
     {
-      var dispatcher = new HttpPipelineDispatcher( _pipelines.Select( item => item.Pipe( handler ) ).ToArray() );
-
-      return request => dispatcher.Dispatch( request )( request );
+      var dispatcher = new HttpPipelineBalanceDispatcher( _pipelines.Select( item => item.Pipe( handler ) ).ToArray() );
+      return dispatcher.AsHandler();
 
     }
   }

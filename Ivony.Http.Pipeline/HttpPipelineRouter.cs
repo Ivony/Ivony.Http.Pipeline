@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,14 +11,22 @@ namespace Ivony.Http.Pipeline
   {
 
 
-    public HttpPipelineRouter( params HttpPipelineRouteRule[] rules )
+    public HttpPipelineRouter( params (Predicate<HttpRequestMessage> condition, IHttpPipeline pipeline)[] rules )
     {
       Rules = rules ?? throw new ArgumentNullException( nameof( rules ) );
     }
 
-    public HttpPipelineRouteRule[] Rules { get; }
+    public (Predicate<HttpRequestMessage> condition, IHttpPipeline pipeline)[] Rules { get; }
 
     public HttpPipelineHandler Pipe( HttpPipelineHandler handler )
+    {
+
+      var dispatcher = new HttpPipelineConditionDispatcher( Rules.Select( r => (r.condition, r.pipeline.Pipe( handler )) ).ToArray(), HandleExcept );
+      return dispatcher.AsHandler();
+
+    }
+
+    private Task<HttpResponseMessage> HandleExcept( HttpRequestMessage request )
     {
       throw new NotImplementedException();
     }

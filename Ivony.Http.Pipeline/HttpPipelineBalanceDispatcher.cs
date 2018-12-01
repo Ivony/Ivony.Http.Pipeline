@@ -12,7 +12,7 @@ namespace Ivony.Http.Pipeline
   /// <summary>
   /// HTTP 管线分发器，将 HTTP 请求分发给多个下游管线。
   /// </summary>
-  public class HttpPipelineDispatcher : IHttpPipelineDispatcher
+  public class HttpPipelineBalanceDispatcher : IHttpPipelineDispatcher
   {
 
     private volatile int counter;
@@ -37,7 +37,7 @@ namespace Ivony.Http.Pipeline
     /// 创建 HttpPipelineDispatcher 对象
     /// </summary>
     /// <param name="pipelines">下游管线</param>
-    public HttpPipelineDispatcher( params HttpPipelineHandler[] pipelines )
+    public HttpPipelineBalanceDispatcher( params HttpPipelineHandler[] pipelines )
     {
       Pipelines = pipelines ?? throw new ArgumentNullException( nameof( pipelines ) );
     }
