@@ -15,9 +15,9 @@
       this.next = nextPipeline;
     }
 
-    HttpPipelineHandler IHttpPipeline.Pipe( HttpPipelineHandler pipeline )
+    HttpPipelineHandler IHttpPipeline.Pipe( HttpPipelineHandler downstream )
     {
-      return this.pipeline.Pipe( next.Pipe( pipeline ) );
+      return this.pipeline.Pipe( next.Pipe( downstream ) );
     }
   }
 }

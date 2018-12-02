@@ -37,9 +37,9 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// implement Pipe method to route request.
     /// </summary>
-    /// <param name="handler">downstream pipeline handler</param>
+    /// <param name="downstream">downstream pipeline handler</param>
     /// <returns>a new pipeline handler with route rules.</returns>
-    public HttpPipelineHandler Pipe( HttpPipelineHandler handler )
+    public HttpPipelineHandler Pipe( HttpPipelineHandler downstream )
     {
       var _rules = Rules.Select( rule => (Func<HttpRequestMessage, HttpPipelineHandler>) (request =>
       {
@@ -50,14 +50,14 @@ namespace Ivony.Http.Pipeline
         CreateRouteData( rule, request, values );
 
         if ( rule is IHttpPipeline pipeline )
-          return pipeline.Pipe( handler );
+          return pipeline.Pipe( downstream );
 
-        return handler;
+        return downstream;
 
       }) ).ToArray();
 
 
-      return new HttpPipelineConditionDispatcher( _rules, HandleExcept ).AsHandler();
+      return new HttpPipelineConditionDistributer( _rules, HandleExcept ).AsHandler();
     }
 
     private void CreateRouteData( IHttpPipelineRouteRule rule, HttpRequestMessage request, IDictionary<string, string> values )

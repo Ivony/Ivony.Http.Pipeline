@@ -55,9 +55,9 @@ namespace Ivony.Http.Pipeline
         _pipeline = pipeline;
       }
 
-      public HttpPipelineHandler Pipe( HttpPipelineHandler handler )
+      public HttpPipelineHandler Pipe( HttpPipelineHandler downstream )
       {
-        return _pipeline( handler );
+        return _pipeline( downstream );
       }
     }
 
@@ -90,9 +90,9 @@ namespace Ivony.Http.Pipeline
     /// <param name="pipeline">上游管线</param>
     /// <param name="dispatcher">分发器</param>
     /// <returns>请求处理管线</returns>
-    public static HttpPipelineHandler Dispatch( this IHttpPipeline pipeline, IHttpPipelineDispatcher dispatcher )
+    public static HttpPipelineHandler Distribute( this IHttpPipeline pipeline, IHttpPipelineDistributer dispatcher )
     {
-      return pipeline.Pipe( request => dispatcher.Dispatch( request )( request ) );
+      return pipeline.Pipe( request => dispatcher.Distribute( request )( request ) );
     }
 
     /// <summary>
@@ -101,9 +101,9 @@ namespace Ivony.Http.Pipeline
     /// <param name="middleware">上游管线</param>
     /// <param name="pipelines">下游管线列表</param>
     /// <returns>请求处理管线</returns>
-    public static HttpPipelineHandler Dispatch( this IHttpPipeline pipeline, params HttpPipelineHandler[] pipelines )
+    public static HttpPipelineHandler Distribute( this IHttpPipeline pipeline, params HttpPipelineHandler[] pipelines )
     {
-      return pipeline.Dispatch( new HttpPipelineBalanceDispatcher( pipelines ) );
+      return pipeline.Distribute( new HttpPipelineBalanceDistributer( pipelines ) );
     }
 
 
@@ -114,9 +114,9 @@ namespace Ivony.Http.Pipeline
     /// <param name="dispatcher">管线分发器</param>
     /// <param name="request">要处理的请求</param>
     /// <returns>处理结果</returns>
-    public static Task<HttpResponseMessage> Handle( this IHttpPipelineDispatcher dispatcher, HttpRequestMessage request )
+    public static Task<HttpResponseMessage> Handle( this IHttpPipelineDistributer dispatcher, HttpRequestMessage request )
     {
-      return dispatcher.Dispatch( request )( request );
+      return dispatcher.Distribute( request )( request );
     }
 
 
@@ -125,7 +125,7 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="dispatcher">管线分发器</param>
     /// <returns>管线处理器</returns>
-    public static HttpPipelineHandler AsHandler( this IHttpPipelineDispatcher dispatcher )
+    public static HttpPipelineHandler AsHandler( this IHttpPipelineDistributer dispatcher )
     {
       return request => dispatcher.Handle( request );
     }

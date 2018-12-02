@@ -4,16 +4,16 @@ namespace Ivony.Http.Pipeline
 {
 
   /// <summary>
-  /// define a HTTP pipeline dispatcher, it's dispatch the HTTP request to diffrent pipeline to handle it.
+  /// define a HTTP pipeline distributer, it's distribute the HTTP request to number of pipeline to handle it.
   /// </summary>
-  public interface IHttpPipelineDispatcher
+  public interface IHttpPipelineDistributer
   {
 
     /// <summary>
-    /// dispatch HTTP request.
+    /// distribute HTTP request.
     /// </summary>
     /// <param name="request">HTTP request message</param>
     /// <returns>a handler to handle this request</returns>
-    HttpPipelineHandler Dispatch( HttpRequestMessage request );
+    HttpPipelineHandler Distribute( HttpRequestMessage request );
   }
 }

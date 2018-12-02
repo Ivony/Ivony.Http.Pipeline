@@ -22,11 +22,11 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// 实现 Pipe 方法，将当前中间件接入到管线中
     /// </summary>
-    /// <param name="pipeline">下游管线</param>
+    /// <param name="downstream">下游管线</param>
     /// <returns>接入了当前中间件的管线</returns>
-    public HttpPipelineHandler Pipe( HttpPipelineHandler pipeline )
+    public HttpPipelineHandler Pipe( HttpPipelineHandler downstream )
     {
-      NextPipeline = pipeline;
+      NextPipeline = downstream;
       return request => ProcessRequest( request );
     }
 
@@ -62,9 +62,9 @@ namespace Ivony.Http.Pipeline
 
     private class BlankPipeline : IHttpPipeline
     {
-      public HttpPipelineHandler Pipe( HttpPipelineHandler pipeline )
+      public HttpPipelineHandler Pipe( HttpPipelineHandler downstream )
       {
-        return pipeline;
+        return downstream;
       }
     }
 
@@ -77,9 +77,9 @@ namespace Ivony.Http.Pipeline
         _pipeline = pipeline;
       }
 
-      public HttpPipelineHandler Pipe( HttpPipelineHandler pipeline )
+      public HttpPipelineHandler Pipe( HttpPipelineHandler downstream )
       {
-        return _pipeline( pipeline );
+        return _pipeline( downstream );
       }
     }
   }

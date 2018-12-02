@@ -14,9 +14,9 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// 链接管线
     /// </summary>
-    /// <param name="pipeline">下游处理管线</param>
+    /// <param name="downstream">下游处理管线</param>
     /// <returns>链接后的 HTTP 处理管线</returns>
-    HttpPipelineHandler Pipe( HttpPipelineHandler pipeline );
+    HttpPipelineHandler Pipe( HttpPipelineHandler downstream );
 
   }
 }

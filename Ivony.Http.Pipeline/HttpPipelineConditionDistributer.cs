@@ -9,7 +9,7 @@ namespace Ivony.Http.Pipeline
   /// <summary>
   /// 实现一个基于条件分发的 HTTP 管线分发器
   /// </summary>
-  public class HttpPipelineConditionDispatcher : IHttpPipelineDispatcher
+  public class HttpPipelineConditionDistributer : IHttpPipelineDistributer
   {
 
     /// <summary>
@@ -17,7 +17,7 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="rules">分发规则</param>
     /// <param name="defaultHandler">默认处理管线</param>
-    public HttpPipelineConditionDispatcher( Func<HttpRequestMessage, HttpPipelineHandler>[] rules, HttpPipelineHandler defaultHandler )
+    public HttpPipelineConditionDistributer( Func<HttpRequestMessage, HttpPipelineHandler>[] rules, HttpPipelineHandler defaultHandler )
     {
       Rules = rules ?? throw new ArgumentNullException( nameof( rules ) );
       DefaultHandler = defaultHandler ?? throw new ArgumentNullException( nameof( defaultHandler ) );
@@ -40,7 +40,7 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="request">HTTP 请求信息</param>
     /// <returns>处理管线</returns>
-    public HttpPipelineHandler Dispatch( HttpRequestMessage request )
+    public HttpPipelineHandler Distribute( HttpRequestMessage request )
     {
       foreach ( var ruleEntry in Rules )
       {
