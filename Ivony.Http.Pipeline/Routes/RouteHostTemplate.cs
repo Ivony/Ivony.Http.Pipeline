@@ -32,7 +32,7 @@ namespace Ivony.Http.Pipeline.Routes
 
     public IDictionary<string, string> GetRouteValues( string hostString )
     {
-      throw new NotImplementedException();
+      return new Dictionary<string, string>();
     }
 
 

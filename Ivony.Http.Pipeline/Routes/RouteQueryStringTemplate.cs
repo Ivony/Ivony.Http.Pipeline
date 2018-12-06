@@ -12,5 +12,9 @@ namespace Ivony.Http.Pipeline.Routes
 
     }
 
+    internal IDictionary<string, string> GetRouteValues( PathSegments path )
+    {
+      return new Dictionary<string, string>();
+    }
   }
 }

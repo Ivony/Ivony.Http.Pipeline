@@ -28,10 +28,10 @@ namespace Ivony.Http.Pipeline.Routes
       if ( match.Groups["scheme"].Success )
         Scheme = match.Groups["scheme"].Value;
 
-      PathTemplate = new RoutePathTemplate( match.Groups["path"].Value );
-
       if ( match.Groups["host"].Success )
         HostTemplate = new RouteHostTemplate( match.Groups["host"].Value );
+
+      PathTemplate = new RoutePathTemplate( match.Groups["path"].Value );
 
       if ( match.Groups["query"].Success )
         QueryStringTemplate = new RouteQueryStringTemplate( match.Groups["query"].Value );
@@ -67,7 +67,25 @@ namespace Ivony.Http.Pipeline.Routes
     /// <returns>路由值</returns>
     public IDictionary<string, string> GetRouteValues( RouteRequestData request )
     {
-      return PathTemplate.GetRouteValues( request.Path );
+
+      if ( Scheme != null && Scheme.Equals( request.Scheme, StringComparison.OrdinalIgnoreCase ) == false )
+        return null;
+
+
+      var values = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase );
+
+      foreach ( var pair in HostTemplate.GetRouteValues( request.Host ) )
+        values.Add( pair.Key, pair.Value );
+
+      foreach ( var pair in PathTemplate.GetRouteValues( request.Path ) )
+        values.Add( pair.Key, pair.Value );
+
+      foreach ( var pair in QueryStringTemplate.GetRouteValues( request.Path ) )
+        values.Add( pair.Key, pair.Value );
+
+
+
+      return values;
 
     }
 
