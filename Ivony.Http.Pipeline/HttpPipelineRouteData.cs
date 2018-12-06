@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Ivony.Http.Pipeline.Routes;
 
 namespace Ivony.Http.Pipeline
 {
@@ -16,7 +17,7 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="values">route values.</param>
     /// <param name="pipeline">route pipeline.</param>
-    internal HttpPipelineRouteData( HttpPipelineRouteData overridedRouteData, HttpPipelineRouteService router, IHttpPipelineRouteRule rule, IEnumerable<KeyValuePair<string, string>> values )
+    internal HttpPipelineRouteData( HttpPipelineRouteData overridedRouteData, HttpPipelineRouter router, IHttpPipelineRouteRule rule, IEnumerable<KeyValuePair<string, string>> values )
     {
       OverridedRouteData = overridedRouteData ?? throw new ArgumentNullException( nameof( overridedRouteData ) );
       Router = router ?? throw new ArgumentNullException( nameof( router ) );
@@ -31,7 +32,7 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// thr router service that process this route data.
     /// </summary>
-    public HttpPipelineRouteService Router { get; }
+    public HttpPipelineRouter Router { get; }
 
 
     /// <summary>

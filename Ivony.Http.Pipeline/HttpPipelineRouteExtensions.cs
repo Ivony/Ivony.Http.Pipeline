@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 
 namespace Ivony.Http.Pipeline
 {
@@ -15,7 +12,7 @@ namespace Ivony.Http.Pipeline
     /// <returns></returns>
     public static HttpPipelineRouteData GetRouteData( this HttpRequestMessage request )
     {
-      return (HttpPipelineRouteData) request.Properties[HttpPipelineRouteService.RouteDataKey];
+      return (HttpPipelineRouteData) request.Properties[HttpPipelineRouter.RouteDataKey];
     }
 
   }

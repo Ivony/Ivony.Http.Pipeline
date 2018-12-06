@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ivony.Http.Pipeline.Routes
+namespace Ivony.Http.Pipeline.Test
 {
-  class RouteQueryStreingTemplate
+  public class RouteRewriteRuleTest
   {
   }
 }

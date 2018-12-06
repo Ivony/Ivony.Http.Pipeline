@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using Ivony.Http.Pipeline.Routes;
 using Microsoft.AspNetCore.Http;
 
 namespace Ivony.Http.Pipeline
@@ -31,7 +32,7 @@ namespace Ivony.Http.Pipeline
     public HttpPipelineRouteBuilder MapPath( string sourcePathTemplate, string targetPathTemplate )
     {
 
-      return AddRule( new PathTemplateRewriteRule( sourcePathTemplate, targetPathTemplate ) );
+      return AddRule( new RouteRewriteRule( sourcePathTemplate, targetPathTemplate ) );
 
 
 
@@ -63,9 +64,9 @@ namespace Ivony.Http.Pipeline
     protected ICollection<IHttpPipelineRouteRule> rules = new List<IHttpPipelineRouteRule>();
 
 
-    public HttpPipelineRouteService Build()
+    public HttpPipelineRouter Build()
     {
-      return new HttpPipelineRouteService( rules.ToArray() );
+      return new HttpPipelineRouter( rules.ToArray() );
 
     }
 
