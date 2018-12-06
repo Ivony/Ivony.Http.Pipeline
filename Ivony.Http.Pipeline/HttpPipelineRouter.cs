@@ -44,7 +44,7 @@ namespace Ivony.Http.Pipeline
     {
       var _rules = Rules.Select( rule => (Func<HttpRequestMessage, HttpPipelineHandler>) (request =>
       {
-        var values = rule.Route( request );
+        var values = rule.Route( new RouteRequestData( request ) );
         if ( values == null )
           return null;
 
@@ -68,6 +68,12 @@ namespace Ivony.Http.Pipeline
       request.Properties[RouteDataKey] = routeData;
     }
 
+
+    /// <summary>
+    /// handle request when no rule matched.
+    /// </summary>
+    /// <param name="request">HTTP request message</param>
+    /// <returns>response</returns>
     protected virtual Task<HttpResponseMessage> HandleExcept( HttpRequestMessage request )
     {
       return Task.FromResult( new HttpResponseMessage( System.Net.HttpStatusCode.NotFound )

@@ -46,7 +46,7 @@ namespace Ivony.Http.Pipeline.Test
 
       {
         var template = new RouteRequestTemplate( "http://163.com/news/{path*}" );
-        var values = template.GetRouteValues( new HttpRequestMessage( HttpMethod.Get, url ) );
+        var values = template.GetRouteValues( new RouteRequestData( new HttpRequestMessage( HttpMethod.Get, url ) ) );
 
         Assert.AreEqual( values.Count, 1 );
         Assert.AreEqual( values.Keys.First(), "path" );
@@ -85,7 +85,7 @@ namespace Ivony.Http.Pipeline.Test
 
     private void RouteRewrite( HttpRequestMessage request, RouteRewriteRule rule )
     {
-      var routeData = rule.Upstream.GetRouteValues( request );
+      var routeData = rule.Upstream.GetRouteValues( new RouteRequestData( request ) );
       rule.Downstream.RewriteRequest( request, new ReadOnlyDictionary<string, string>( routeData ) );
     }
 

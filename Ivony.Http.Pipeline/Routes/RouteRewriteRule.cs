@@ -29,11 +29,11 @@ namespace Ivony.Http.Pipeline.Routes
     /// <summary>
     /// 产生路由值
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="requestData"></param>
     /// <returns></returns>
-    public IDictionary<string, string> Route( HttpRequestMessage request )
+    public IDictionary<string, string> Route( RouteRequestData requestData )
     {
-      return Upstream.GetRouteValues( request );
+      return Upstream.GetRouteValues( requestData );
     }
 
     public HttpPipelineHandler Pipe( HttpPipelineHandler handler )

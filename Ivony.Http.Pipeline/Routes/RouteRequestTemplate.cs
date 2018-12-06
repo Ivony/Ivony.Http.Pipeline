@@ -32,9 +32,9 @@ namespace Ivony.Http.Pipeline.Routes
 
 
 
-    public IDictionary<string, string> GetRouteValues( HttpRequestMessage request )
+    public IDictionary<string, string> GetRouteValues( RouteRequestData request )
     {
-      return RoutePathTemplate.GetRouteValues( PathSegments.Create( request.RequestUri.AbsolutePath ) );
+      return RoutePathTemplate.GetRouteValues( request.Path );
 
     }
 
