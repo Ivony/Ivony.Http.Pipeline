@@ -6,5 +6,11 @@ namespace Ivony.Http.Pipeline.Routes
 {
   public class RouteQueryStringTemplate
   {
+
+    public RouteQueryStringTemplate( string queryString )
+    {
+
+    }
+
   }
 }
