@@ -44,7 +44,7 @@ namespace Ivony.Http.Pipeline
     {
       var _rules = Rules.Select( rule => (Func<HttpRequestMessage, HttpPipelineHandler>) (request =>
       {
-        var values = rule.Route( new RouteRequestData( request ) );
+        var values = rule.Match( new RouteRequestData( request ) );
         if ( values == null )
           return null;
 

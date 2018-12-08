@@ -31,7 +31,10 @@ namespace ApiGateway
 
       app.UsePipeline( pipe => pipe
         .Forward()
-        .UseRouter( ("/Logs/{path*}", "http://10.168.95.71:5000/{path}") )
+        .UseRouter( route => route
+          .Match( "/Logs/{path*}" )
+          .Match( "/Log/{path*}" )
+          .Rewrite( "http://10.168.95.71:5000/{path}" ) )
         .Emit()
       );
 

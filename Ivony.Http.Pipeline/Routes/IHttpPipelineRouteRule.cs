@@ -8,7 +8,7 @@ namespace Ivony.Http.Pipeline.Routes
   public interface IHttpPipelineRouteRule
   {
 
-    IDictionary<string, string> Route( RouteRequestData requestData );
+    IDictionary<string, string> Match( RouteRequestData requestData );
 
   }
 }

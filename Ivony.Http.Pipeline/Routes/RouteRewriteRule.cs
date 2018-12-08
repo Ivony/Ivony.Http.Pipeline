@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 
@@ -11,7 +12,7 @@ namespace Ivony.Http.Pipeline.Routes
     /// <summary>
     /// 上游模板
     /// </summary>
-    public RouteRequestTemplate Upstream { get; }
+    public RouteRequestTemplate[] Upstreams { get; }
 
     /// <summary>
     /// 下游模板
@@ -19,11 +20,16 @@ namespace Ivony.Http.Pipeline.Routes
     public RouteRequestTemplate Downstream { get; }
 
 
-    public RouteRewriteRule( string upstreamTemplate, string downstreamTemplate )
+
+    public RouteRewriteRule( IReadOnlyList<RouteRequestTemplate> upstreamTemplates, RouteRequestTemplate downstreamTemplate )
     {
-      Upstream = new RouteRequestTemplate( upstreamTemplate );
-      Downstream = new RouteRequestTemplate( downstreamTemplate );
+      Upstreams = upstreamTemplates.ToArray();
+      Downstream = downstreamTemplate;
     }
+
+
+    public RouteRewriteRule( string upstream, string downstream ) : this( new[] { new RouteRequestTemplate( upstream ) }, new RouteRequestTemplate( downstream ) ) { }
+
 
 
     /// <summary>
@@ -31,20 +37,38 @@ namespace Ivony.Http.Pipeline.Routes
     /// </summary>
     /// <param name="requestData"></param>
     /// <returns></returns>
-    public IDictionary<string, string> Route( RouteRequestData requestData )
+    public IDictionary<string, string> Match( RouteRequestData requestData )
     {
-      return Upstream.GetRouteValues( requestData );
+      foreach ( var item in Upstreams )
+      {
+        var values = item.GetRouteValues( requestData );
+        if ( values != null )
+          return values;
+      }
+
+      return null;
     }
+
+
+    /// <summary>
+    /// 重写请求
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public HttpRequestMessage Rewrite( HttpRequestMessage request )
+    {
+      return Downstream.RewriteRequest( request, request.GetRouteData().Values );
+    }
+
+
 
     public HttpPipelineHandler Pipe( HttpPipelineHandler handler )
     {
       return request =>
       {
-        request = Downstream.RewriteRequest( request, request.GetRouteData().Values );
+        request = Rewrite( request );
         return handler( request );
       };
     }
-
-
   }
 }

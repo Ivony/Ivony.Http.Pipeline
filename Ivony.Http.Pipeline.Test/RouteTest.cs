@@ -85,7 +85,7 @@ namespace Ivony.Http.Pipeline.Test
 
     private void RouteRewrite( HttpRequestMessage request, RouteRewriteRule rule )
     {
-      var routeData = rule.Upstream.GetRouteValues( new RouteRequestData( request ) );
+      var routeData = rule.Match( new RouteRequestData( request ) );
       rule.Downstream.RewriteRequest( request, new ReadOnlyDictionary<string, string>( routeData ) );
     }
 

@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using Ivony.Http.Pipeline.Routes;
 
 namespace Ivony.Http.Pipeline
@@ -44,6 +46,38 @@ namespace Ivony.Http.Pipeline
       return UseRouter( pipeline, rules.Select( r => new RouteRewriteRule( r.upstreamTemplate, r.downstreamTemplate ) ).ToArray() );
     }
 
+    /// <summary>
+    /// use a router.
+    /// </summary>
+    /// <param name="pipeline">pipeline to use router</param>
+    /// <param name="rules">route rules</param>
+    /// <returns>pipeline with router</returns>
+    public static IHttpPipeline UseRouter( this IHttpPipeline pipeline, params (string[] upstreamTemplates, string downstreamTemplate)[] rules )
+    {
+      return UseRouter( pipeline, rules.Select( r => new RouteRewriteRule( r.upstreamTemplates.Select( t => new RouteRequestTemplate( t ) ).ToArray(), new RouteRequestTemplate( r.downstreamTemplate ) ) ).ToArray() );
+    }
+
+
+    /// <summary>
+    /// use a router.
+    /// </summary>
+    /// <param name="pipeline">pipeline to use router</param>
+    /// <param name="rules">route rules</param>
+    /// <returns>pipeline with router</returns>
+    public static IHttpPipeline UseRouter( this IHttpPipeline pipeline, Action<IRouteRulesBuilder> configure )
+    {
+      var builder = new IRouteRulesBuilder();
+      configure( builder );
+      return UseRouter( pipeline, builder.GetRules() );
+    }
+
+
+
+
+    public static RouteRewriteRuleBuilder Match( this IRouteRulesBuilder builder, string upstreamTemplate )
+    {
+      return new RouteRewriteRuleBuilder( builder ).Match( upstreamTemplate );
+    }
 
 
   }
