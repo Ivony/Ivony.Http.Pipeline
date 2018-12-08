@@ -19,7 +19,7 @@ namespace Ivony.Http.Pipeline
     /// <param name="pipeline">route pipeline.</param>
     internal HttpPipelineRouteData( HttpPipelineRouteData overridedRouteData, HttpPipelineRouter router, IHttpPipelineRouteRule rule, IEnumerable<KeyValuePair<string, string>> values )
     {
-      OverridedRouteData = overridedRouteData ?? throw new ArgumentNullException( nameof( overridedRouteData ) );
+      OverridedRouteData = overridedRouteData;
       Router = router ?? throw new ArgumentNullException( nameof( router ) );
       RouteRule = rule ?? throw new ArgumentNullException( nameof( rule ) );
 

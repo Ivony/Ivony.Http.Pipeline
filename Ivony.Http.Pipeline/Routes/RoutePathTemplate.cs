@@ -44,7 +44,7 @@ namespace Ivony.Http.Pipeline.Routes
 
     }
 
-    public string RewritePath( IReadOnlyDictionary<string, string> routeValues )
+    public string Rewrite( IReadOnlyDictionary<string, string> routeValues )
     {
 
       var builder = new StringBuilder();
@@ -56,13 +56,15 @@ namespace Ivony.Http.Pipeline.Routes
             builder.Append( "/" + segment.Value );
             break;
           case SegmentType.Dynamic:
-          case SegmentType.InfinityDynamic:
-
             if ( routeValues.TryGetValue( segment.Value, out var value ) == false )
               throw new InvalidOperationException();
 
             else
               builder.Append( "/" + value );
+            break;
+
+          case SegmentType.InfinityDynamic:
+
 
             break;
         }
@@ -111,7 +113,18 @@ namespace Ivony.Http.Pipeline.Routes
         }
       }
 
-      if ( i < segments.Length - 1 )
+
+      var lastSegment = segments[segments.Length - 1];
+      //infinity dynamic is not i++.
+      if ( lastSegment.Type == SegmentType.InfinityDynamic )
+      {
+        i++;
+        if ( values.ContainsKey( lastSegment.Value ) == false )
+          values[lastSegment.Value] = null;
+      }
+
+
+      if ( i < segments.Length )
         return null;
 
       return values;

@@ -9,7 +9,7 @@ namespace Ivony.Http.Pipeline.Routes
   public class RouteRequestTemplate
   {
     private static readonly string schemeRegex = @"(?<scheme>[a-zA-Z]+):";
-    private static readonly string hostRegex = @"//(?<host>([a-zA-Z0-9\.\-]+)(:[0-9])?)";
+    private static readonly string hostRegex = @"//(?<host>([a-zA-Z0-9\.\-]+))(:(?<port>[0-9]+))?";
     private static readonly string pathRegex = @"(?<path>[^?]*)";
     private static readonly string queryRegex = @"\?(?<query>.+)";
 
@@ -30,6 +30,10 @@ namespace Ivony.Http.Pipeline.Routes
 
       if ( match.Groups["host"].Success )
         HostTemplate = new RouteHostTemplate( match.Groups["host"].Value );
+
+      if ( match.Groups["port"].Success )
+        Port = match.Groups["port"].Value;
+
 
       PathTemplate = new RoutePathTemplate( match.Groups["path"].Value );
 
@@ -58,6 +62,11 @@ namespace Ivony.Http.Pipeline.Routes
     /// </summary>
     public RouteQueryStringTemplate QueryStringTemplate { get; }
 
+    /// <summary>
+    /// 端口号，如果有的话
+    /// </summary>
+    public string Port { get; }
+
 
 
     /// <summary>
@@ -72,20 +81,41 @@ namespace Ivony.Http.Pipeline.Routes
         return null;
 
 
-      var values = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase );
+      var routeValues = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase );
 
-      foreach ( var pair in HostTemplate.GetRouteValues( request.Host ) )
-        values.Add( pair.Key, pair.Value );
+      if ( HostTemplate != null )
+      {
+        var values = HostTemplate.GetRouteValues( request.Host );
+        if ( values == null )
+          return null;
 
-      foreach ( var pair in PathTemplate.GetRouteValues( request.Path ) )
-        values.Add( pair.Key, pair.Value );
-
-      foreach ( var pair in QueryStringTemplate.GetRouteValues( request.Path ) )
-        values.Add( pair.Key, pair.Value );
+        foreach ( var pair in values )
+          routeValues.Add( pair.Key, pair.Value );
+      }
 
 
+      {
+        var values = PathTemplate.GetRouteValues( request.Path );
+        if ( values == null )
+          return null;
 
-      return values;
+        foreach ( var pair in values )
+          routeValues.Add( pair.Key, pair.Value );
+      }
+
+
+      if ( QueryStringTemplate != null )
+      {
+        var values = QueryStringTemplate.GetRouteValues( request.Path );
+        if ( values == null )
+          return null;
+
+        foreach ( var pair in values )
+          routeValues.Add( pair.Key, pair.Value );
+      }
+
+
+      return routeValues;
 
     }
 
@@ -94,7 +124,11 @@ namespace Ivony.Http.Pipeline.Routes
     {
 
       var builder = new UriBuilder( request.RequestUri );
-      builder.Path = PathTemplate.RewritePath( routeValues );
+
+      builder.Host = HostTemplate.Rewrite( routeValues );
+      builder.Path = PathTemplate.Rewrite( routeValues );
+      if ( Port != null )
+        builder.Port = int.Parse( Port );
 
       request.RequestUri = builder.Uri;
 

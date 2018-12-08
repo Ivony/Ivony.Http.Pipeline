@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System.Linq;
+using System.Net.Http;
+using Ivony.Http.Pipeline.Routes;
 
 namespace Ivony.Http.Pipeline
 {
@@ -12,8 +14,37 @@ namespace Ivony.Http.Pipeline
     /// <returns></returns>
     public static HttpPipelineRouteData GetRouteData( this HttpRequestMessage request )
     {
-      return (HttpPipelineRouteData) request.Properties[HttpPipelineRouter.RouteDataKey];
+      if ( request.Properties.TryGetValue( HttpPipelineRouter.RouteDataKey, out var data ) )
+        return data as HttpPipelineRouteData;
+
+      else
+        return null;
     }
+
+
+    /// <summary>
+    /// use a router.
+    /// </summary>
+    /// <param name="pipeline">pipeline to use router</param>
+    /// <param name="rules">route rules</param>
+    /// <returns>pipeline with router</returns>
+    public static IHttpPipeline UseRouter( this IHttpPipeline pipeline, params IHttpPipelineRouteRule[] rules )
+    {
+      return pipeline.Pipe( new HttpPipelineRouter( rules ) );
+    }
+
+    /// <summary>
+    /// use a router.
+    /// </summary>
+    /// <param name="pipeline">pipeline to use router</param>
+    /// <param name="rules">route rules</param>
+    /// <returns>pipeline with router</returns>
+    public static IHttpPipeline UseRouter( this IHttpPipeline pipeline, params (string upstreamTemplate, string downstreamTemplate)[] rules )
+    {
+      return UseRouter( pipeline, rules.Select( r => new RouteRewriteRule( r.upstreamTemplate, r.downstreamTemplate ) ).ToArray() );
+    }
+
+
 
   }
 }

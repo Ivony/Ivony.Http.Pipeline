@@ -67,7 +67,7 @@ namespace Ivony.Http.Pipeline.Test
         ["path"] = "/a/b/c"
       };
 
-      template.RewritePath( values );
+      template.Rewrite( values );
     }
 
     [TestMethod]

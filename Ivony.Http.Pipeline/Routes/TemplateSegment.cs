@@ -38,6 +38,24 @@ namespace Ivony.Http.Pipeline.Routes
     }
 
 
-  }
+    public override string ToString()
+    {
+      switch ( Type )
+      {
+        case SegmentType.Static:
+          return Value;
 
+        case SegmentType.Dynamic:
+          return $"{{{Value}}}";
+
+        case SegmentType.InfinityDynamic:
+          return $"{{{Value}*}}";
+
+        default:
+          return null;
+      }
+
+    }
+
+  }
 }

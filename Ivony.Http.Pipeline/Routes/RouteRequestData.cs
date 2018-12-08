@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -12,17 +14,23 @@ namespace Ivony.Http.Pipeline.Routes
   {
 
 
+    /// <summary>
+    /// 创建 RouteRequestData 对象
+    /// </summary>
+    /// <param name="request"></param>
     public RouteRequestData( HttpRequestMessage request )
     {
       Path = PathSegments.Create( request.RequestUri.AbsolutePath );
       Scheme = request.RequestUri.Scheme;
-      QueryString = ParseQueryString( request.RequestUri.Query );
+      QueryString = new ReadOnlyCollection<(string name, string value)>( ParseQueryString( request.RequestUri.Query ).ToArray() );
     }
 
 
-    private static readonly Regex queryStringRegex = new Regex( @"\?(\w+)=(\w+)(\&(\w+)=(\w+))*", RegexOptions.Compiled );
-
-
+    /// <summary>
+    /// 解析 QueryString
+    /// </summary>
+    /// <param name="query">查询字符串</param>
+    /// <returns>解析后的结果</returns>
     private IEnumerable<(string name, string value)> ParseQueryString( string query )
     {
       if ( query == null )
@@ -90,7 +98,7 @@ namespace Ivony.Http.Pipeline.Routes
     /// <summary>
     /// 查询字符串
     /// </summary>
-    public IEnumerable<(string name, string value)> QueryString { get; }
+    public IReadOnlyList<(string name, string value)> QueryString { get; }
 
     /// <summary>
     /// HTTP 头信息
