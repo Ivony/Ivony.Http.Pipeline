@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Ivony.Http.Pipeline.Routes;
 using Microsoft.AspNetCore.Http;
 
 namespace Ivony.Http.Pipeline
@@ -12,7 +13,7 @@ namespace Ivony.Http.Pipeline
   /// <summary>
   /// implement a http piieline route service.
   /// </summary>
-  public class HttpPipelineRouteService : IHttpPipeline
+  public class HttpPipelineRouter : IHttpPipeline
   {
 
 
@@ -20,7 +21,7 @@ namespace Ivony.Http.Pipeline
     /// create a HttpPipelineRouteService instance
     /// </summary>
     /// <param name="rules">route rules</param>
-    public HttpPipelineRouteService( params IHttpPipelineRouteRule[] rules )
+    public HttpPipelineRouter( params IHttpPipelineRouteRule[] rules )
     {
       Rules = rules ?? throw new ArgumentNullException( nameof( rules ) );
     }
@@ -43,7 +44,7 @@ namespace Ivony.Http.Pipeline
     {
       var _rules = Rules.Select( rule => (Func<HttpRequestMessage, HttpPipelineHandler>) (request =>
       {
-        var values = rule.Route( request );
+        var values = rule.Match( new RouteRequestData( request ) );
         if ( values == null )
           return null;
 
@@ -60,12 +61,19 @@ namespace Ivony.Http.Pipeline
       return new HttpPipelineConditionDistributer( _rules, HandleExcept ).AsHandler();
     }
 
-    private void CreateRouteData( IHttpPipelineRouteRule rule, HttpRequestMessage request, IDictionary<string, string> values )
+
+    private void CreateRouteData( IHttpPipelineRouteRule rule, HttpRequestMessage request, IEnumerable<KeyValuePair<string, string>> values )
     {
       var routeData = new HttpPipelineRouteData( request.GetRouteData(), this, rule, values );
       request.Properties[RouteDataKey] = routeData;
     }
 
+
+    /// <summary>
+    /// handle request when no rule matched.
+    /// </summary>
+    /// <param name="request">HTTP request message</param>
+    /// <returns>response</returns>
     protected virtual Task<HttpResponseMessage> HandleExcept( HttpRequestMessage request )
     {
       return Task.FromResult( new HttpResponseMessage( System.Net.HttpStatusCode.NotFound )

@@ -10,7 +10,7 @@ namespace Ivony.Http.Pipeline
 
 
   /// <summary>
-  /// HTTP 管线分发器，将 HTTP 请求分发给多个下游管线。
+  /// 实现一个平衡管线分发器，将 HTTP 请求尽可能平衡的分发给多个下游管线。
   /// </summary>
   public class HttpPipelineBalanceDistributer : IHttpPipelineDistributer
   {

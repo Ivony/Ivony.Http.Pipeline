@@ -6,18 +6,18 @@
   /// </summary>
   internal sealed class HttpPipelineMiddlewareLink : IHttpPipeline
   {
-    private IHttpPipeline _upstream;
-    private IHttpPipeline _downstream;
+    private readonly IHttpPipeline _upstream;
+    private readonly IHttpPipeline _downstream;
 
-    public HttpPipelineMiddlewareLink( IHttpPipeline upstreamPipeline, IHttpPipeline downstreamPipeline )
+    public HttpPipelineMiddlewareLink( IHttpPipeline upstream, IHttpPipeline downstream )
     {
-      _upstream = upstreamPipeline;
-      _downstream = downstreamPipeline;
+      _upstream = upstream;
+      _downstream = downstream;
     }
 
-    HttpPipelineHandler IHttpPipeline.Pipe( HttpPipelineHandler downstream )
+    HttpPipelineHandler IHttpPipeline.Pipe( HttpPipelineHandler handler )
     {
-      return this._upstream.Pipe( this._downstream.Pipe( downstream ) );
+      return _upstream.Pipe( _downstream.Pipe( handler ) );
     }
   }
 }

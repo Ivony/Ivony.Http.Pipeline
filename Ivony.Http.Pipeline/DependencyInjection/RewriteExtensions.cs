@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Ivony.Http.Pipeline;
 using Microsoft.AspNetCore.Http;
 
-namespace Ivony.Http.Pipeline
+namespace Microsoft.Extensions.DependencyInjection
 {
   public static class RewriteExtensions
   {
