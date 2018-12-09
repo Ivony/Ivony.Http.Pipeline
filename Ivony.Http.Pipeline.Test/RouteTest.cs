@@ -76,18 +76,9 @@ namespace Ivony.Http.Pipeline.Test
       var rule = new RouteRewriteRule( "http://163.com/news/{path*}", "http://163.com/{path*}" );
       var request = new HttpRequestMessage( HttpMethod.Get, "http://163.com/news/Test/TestNews" );
 
-      RouteRewrite( request, rule );
-
+      request = rule.Rewrite( request );
       Assert.AreEqual( request.RequestUri.AbsoluteUri, "http://163.com/Test/TestNews" );
 
     }
-
-
-    private void RouteRewrite( HttpRequestMessage request, RouteRewriteRule rule )
-    {
-      var routeData = rule.Match( new RouteRequestData( request ) );
-      rule.Downstream.RewriteRequest( request, new ReadOnlyDictionary<string, string>( routeData ) );
-    }
-
   }
 }

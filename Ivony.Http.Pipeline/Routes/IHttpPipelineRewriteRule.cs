@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Ivony.Http.Pipeline.Routes
 {
-  public interface IHttpPipelineRouteRule
+  public interface IHttpPipelineRewriteRule : IHttpPipelineRouteRule
   {
 
-    IReadOnlyDictionary<string, string> Match( RouteRequestData requestData );
+    HttpRequestMessage Rewrite( HttpRequestMessage request );
 
   }
 }

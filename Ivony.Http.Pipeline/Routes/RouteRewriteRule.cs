@@ -6,7 +6,10 @@ using System.Text;
 
 namespace Ivony.Http.Pipeline.Routes
 {
-  public class RouteRewriteRule : IHttpPipelineRouteRule, IHttpPipeline
+  /// <summary>
+  /// route and rewrite request rule
+  /// </summary>
+  public class RouteRewriteRule : IHttpPipelineRewriteRule, IHttpPipeline
   {
 
     /// <summary>
@@ -37,7 +40,7 @@ namespace Ivony.Http.Pipeline.Routes
     /// </summary>
     /// <param name="requestData"></param>
     /// <returns></returns>
-    public IDictionary<string, string> Match( RouteRequestData requestData )
+    public IReadOnlyDictionary<string, string> Match( RouteRequestData requestData )
     {
       foreach ( var item in Upstreams )
       {
@@ -57,10 +60,22 @@ namespace Ivony.Http.Pipeline.Routes
     /// <returns></returns>
     public HttpRequestMessage Rewrite( HttpRequestMessage request )
     {
-      return Downstream.RewriteRequest( request, request.GetRouteData().Values );
+      var routeValues = GetRouteValues( request );
+      if ( routeValues == null )
+        return request;
+
+      return Downstream.RewriteRequest( request, routeValues );
     }
 
+    private IReadOnlyDictionary<string, string> GetRouteValues( HttpRequestMessage request )
+    {
+      var routeData = request.GetRouteData();
+      if ( routeData?.RouteRule == this )
+        return routeData.Values;
 
+      else
+        return Match( new RouteRequestData( request ) );
+    }
 
     public HttpPipelineHandler Pipe( HttpPipelineHandler handler )
     {

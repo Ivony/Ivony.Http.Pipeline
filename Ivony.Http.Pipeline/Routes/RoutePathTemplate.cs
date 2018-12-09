@@ -56,16 +56,12 @@ namespace Ivony.Http.Pipeline.Routes
             builder.Append( "/" + segment.Value );
             break;
           case SegmentType.Dynamic:
+          case SegmentType.InfinityDynamic:
             if ( routeValues.TryGetValue( segment.Value, out var value ) == false )
               throw new InvalidOperationException();
 
             else
               builder.Append( "/" + value );
-            break;
-
-          case SegmentType.InfinityDynamic:
-
-
             break;
         }
       }

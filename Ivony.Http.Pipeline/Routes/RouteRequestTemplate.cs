@@ -74,7 +74,7 @@ namespace Ivony.Http.Pipeline.Routes
     /// </summary>
     /// <param name="request">请求数据</param>
     /// <returns>路由值</returns>
-    public IDictionary<string, string> GetRouteValues( RouteRequestData request )
+    public IReadOnlyDictionary<string, string> GetRouteValues( RouteRequestData request )
     {
 
       if ( Scheme != null && Scheme.Equals( request.Scheme, StringComparison.OrdinalIgnoreCase ) == false )

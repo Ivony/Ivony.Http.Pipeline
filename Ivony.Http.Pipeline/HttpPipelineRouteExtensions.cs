@@ -66,7 +66,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with router</returns>
     public static IHttpPipeline UseRouter( this IHttpPipeline pipeline, Action<IRouteRulesBuilder> configure )
     {
-      var builder = new IRouteRulesBuilder();
+      var builder = new RouteRulesBuilder();
       configure( builder );
       return UseRouter( pipeline, builder.GetRules() );
     }
