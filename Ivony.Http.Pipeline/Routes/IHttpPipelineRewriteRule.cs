@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Ivony.Http.Pipeline.Routes
 {
-  public interface IHttpPipelineRewriteRule : IHttpPipelineRouteRule
+  public interface IHttpPipelineRewriteRule
   {
 
     HttpRequestMessage Rewrite( HttpRequestMessage request );

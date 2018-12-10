@@ -2,17 +2,18 @@
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using Ivony.Http.Pipeline;
 using Ivony.Http.Pipeline.Routes;
 
 namespace Ivony.Http.Pipeline
 {
-  public static class HttpPipelineRouteExtensions
+  public static class ExtensionsRoute
   {
 
     /// <summary>
     /// get the route data, if pipeline cross a router.
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="request">request message</param>
     /// <returns></returns>
     public static HttpPipelineRouteData GetRouteData( this HttpRequestMessage request )
     {
@@ -32,7 +33,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with router</returns>
     public static IHttpPipeline UseRouter( this IHttpPipeline pipeline, params IHttpPipelineRouteRule[] rules )
     {
-      return pipeline.Pipe( new HttpPipelineRouter( rules ) );
+      return pipeline.JoinPipeline( new HttpPipelineRouter( rules ) );
     }
 
     /// <summary>

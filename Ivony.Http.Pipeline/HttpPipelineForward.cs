@@ -7,8 +7,54 @@ using Microsoft.AspNetCore.Http;
 
 namespace Ivony.Http.Pipeline
 {
+
+
+  /// <summary>
+  /// contract proxy headers build mode
+  /// </summary>
+  public enum ForwardProxyMode
+  {
+    /// <summary>just forward the request, not as a proxy</summary>
+    None,
+
+    /// <summary>build legacy proxy headers, like X-Forwarded-For, X-Forwarded-Host and X-Forwarded-Proto</summary>
+    Legacy,
+
+    /// <summary>build proxy headers using RFC7329</summary>
+    RFC7239
+  }
+
+
+
+  /// <summary>
+  /// contract transmit headers behavior
+  /// </summary>
+  public enum TransmitHeaderBehavior
+  {
+    /// <summary>dose not transmit any header.</summary>
+    Nothing,
+
+    /// <summary>transmit all headers.</summary>
+    All
+  }
+
+
   public class HttpPipelineForward : HttpPipeline
   {
+
+
+
+    public HttpPipelineForward( ForwardProxyMode forwardProxyMode, TransmitHeaderBehavior transmitHeaderBehavior )
+    {
+      ForwardProxyMode = forwardProxyMode;
+      TransmitHeaderBehavior = transmitHeaderBehavior;
+    }
+
+    public ForwardProxyMode ForwardProxyMode { get; }
+
+    public TransmitHeaderBehavior TransmitHeaderBehavior { get; }
+
+
 
     protected override Task<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
     {
@@ -17,7 +63,31 @@ namespace Ivony.Http.Pipeline
       request.Method = new HttpMethod( context.Request.Method );
       request.RequestUri = CreateUri( context.Request );
 
+      AddForwardHeaders( request );
+
+
       return base.ProcessRequest( request );
+    }
+
+    private void AddForwardHeaders( HttpRequestMessage request )
+    {
+      switch ( ForwardProxyMode )
+      {
+        case ForwardProxyMode.None:
+          break;
+
+        case ForwardProxyMode.Legacy:
+          var context = request.GetHttpContext();
+
+          request.Headers.Add( "X-Forwarded-For", context.Connection.LocalIpAddress.ToString() );
+          request.Headers.Add( "X-Forwarded-Host", context.Request.Host.Value );
+          request.Headers.Add( "X-Forwarded-Proto", context.Request.Protocol );
+
+          break;
+
+        case ForwardProxyMode.RFC7239:
+          throw new NotSupportedException();
+      }
     }
 
     private Uri CreateUri( HttpRequest request )

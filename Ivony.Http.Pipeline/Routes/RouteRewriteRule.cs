@@ -3,27 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ivony.Http.Pipeline.Routes
 {
   /// <summary>
   /// route and rewrite request rule
   /// </summary>
-  public class RouteRewriteRule : IHttpPipelineRewriteRule, IHttpPipeline
+  public class RouteRewriteRule : IHttpPipelineRewriteRule, IHttpPipelineRouteRule, IHttpPipeline
   {
 
     /// <summary>
-    /// 上游模板
+    /// upstream templates, match the request and extract route values
     /// </summary>
     public RouteRequestTemplate[] Upstreams { get; }
 
     /// <summary>
-    /// 下游模板
+    /// downstream template, rewrite thr request with route values
     /// </summary>
     public RouteRequestTemplate Downstream { get; }
 
 
 
+    /// <summary>
+    /// create RouteRewriteRule instance
+    /// </summary>
+    /// <param name="upstreamTemplates">upstream templates</param>
+    /// <param name="downstreamTemplate">downstream template</param>
     public RouteRewriteRule( IReadOnlyList<RouteRequestTemplate> upstreamTemplates, RouteRequestTemplate downstreamTemplate )
     {
       Upstreams = upstreamTemplates.ToArray();
@@ -77,7 +83,7 @@ namespace Ivony.Http.Pipeline.Routes
         return Match( new RouteRequestData( request ) );
     }
 
-    public HttpPipelineHandler Pipe( HttpPipelineHandler handler )
+    public HttpPipelineHandler Join( HttpPipelineHandler handler )
     {
       return request =>
       {

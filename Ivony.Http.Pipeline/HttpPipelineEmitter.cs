@@ -13,10 +13,16 @@ namespace Ivony.Http.Pipeline
   public class HttpPipelineEmitter : IHttpPipelineEmitter
   {
 
-    public HttpPipelineEmitter()
+    public HttpPipelineEmitter() : this( new HttpClientHandler { AllowAutoRedirect = false, AutomaticDecompression = System.Net.DecompressionMethods.None, UseCookies = false } )
     {
-      _client = new HttpClient( new HttpClientHandler { AllowAutoRedirect = false, AutomaticDecompression = System.Net.DecompressionMethods.None, UseCookies = false } );
     }
+
+
+    public HttpPipelineEmitter( HttpMessageHandler handler ) : this( new HttpClient( handler ) )
+    {
+    }
+
+
 
     public HttpPipelineEmitter( HttpClient client )
     {

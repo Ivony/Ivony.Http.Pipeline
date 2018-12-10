@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ivony.Http.Pipeline.Routes;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ivony.Http.Pipeline
 {
@@ -40,7 +41,7 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="downstream">downstream pipeline handler</param>
     /// <returns>a new pipeline handler with route rules.</returns>
-    public HttpPipelineHandler Pipe( HttpPipelineHandler downstream )
+    public HttpPipelineHandler Join( HttpPipelineHandler downstream )
     {
       var _rules = Rules.Select( rule => (Func<HttpRequestMessage, HttpPipelineHandler>) (request =>
       {
@@ -51,7 +52,7 @@ namespace Ivony.Http.Pipeline
         CreateRouteData( rule, request, values );
 
         if ( rule is IHttpPipeline pipeline )
-          return pipeline.Pipe( downstream );
+          return pipeline.Join( downstream );
 
         return downstream;
 
