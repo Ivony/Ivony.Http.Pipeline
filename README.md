@@ -46,3 +46,9 @@ You can create your own network services with any combination of these basic com
 
 have fun.
 
+
+performance test result:
+
+* **40% less average request time** compared to Ocelot
+* **more than 25% rps** compared to Ocelot
+
