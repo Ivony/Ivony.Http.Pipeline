@@ -8,7 +8,7 @@ namespace Ivony.Http.Pipeline
 {
 
   /// <summary>
-  /// HTTP 请求发射器，负责发送 HTTP 请求。
+  /// HTTP request emitter, emit the HTTP request
   /// </summary>
   public class HttpPipelineEmitter : IHttpPipelineEmitter
   {

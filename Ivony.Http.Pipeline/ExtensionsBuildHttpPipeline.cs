@@ -22,7 +22,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>请求处理管线</returns>
     public static IHttpPipeline JoinPipeline( this IHttpPipeline upstream, IHttpPipeline downstream )
     {
-      return new HttpPipelineMiddlewareLink( upstream, downstream );
+      return new HttpPipelineJointer( upstream, downstream );
     }
 
 
@@ -34,7 +34,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>请求处理管线</returns>
     public static IHttpPipeline JoinPipeline( this IHttpPipeline upstream, Func<HttpPipelineHandler, HttpPipelineHandler> downstream )
     {
-      return new HttpPipelineMiddlewareLink( upstream, new HttpPipelineImplement( downstream ) );
+      return new HttpPipelineJointer( upstream, new HttpPipelineImplement( downstream ) );
     }
 
 

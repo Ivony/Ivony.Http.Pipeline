@@ -17,7 +17,7 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// 下游管线
     /// </summary>
-    protected HttpPipelineHandler NextPipeline { get; private set; }
+    protected HttpPipelineHandler Downstream { get; private set; }
 
     /// <summary>
     /// 实现 Pipe 方法，将当前中间件接入到管线中
@@ -26,7 +26,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>接入了当前中间件的管线</returns>
     public HttpPipelineHandler Join( HttpPipelineHandler downstream )
     {
-      NextPipeline = downstream;
+      Downstream = downstream;
       return request => ProcessRequest( request );
     }
 
@@ -49,7 +49,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>响应信息</returns>
     protected virtual Task<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
     {
-      return NextPipeline( request );
+      return Downstream( request );
     }
 
 
@@ -65,6 +65,11 @@ namespace Ivony.Http.Pipeline
       public HttpPipelineHandler Join( HttpPipelineHandler downstream )
       {
         return downstream;
+      }
+
+      public override string ToString()
+      {
+        return "::";
       }
     }
 

@@ -2,14 +2,14 @@
 {
 
   /// <summary>
-  /// 链接两个管线中间件的链接器
+  /// a jointer to join two pipeline
   /// </summary>
-  internal sealed class HttpPipelineMiddlewareLink : IHttpPipeline
+  internal sealed class HttpPipelineJointer : IHttpPipeline
   {
     private readonly IHttpPipeline _upstream;
     private readonly IHttpPipeline _downstream;
 
-    public HttpPipelineMiddlewareLink( IHttpPipeline upstream, IHttpPipeline downstream )
+    public HttpPipelineJointer( IHttpPipeline upstream, IHttpPipeline downstream )
     {
       _upstream = upstream;
       _downstream = downstream;
@@ -19,5 +19,12 @@
     {
       return _upstream.Join( _downstream.Join( handler ) );
     }
+
+
+    public override string ToString()
+    {
+      return $"{_upstream}\n-> {_downstream}";
+    }
+
   }
 }

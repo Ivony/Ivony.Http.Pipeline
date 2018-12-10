@@ -37,10 +37,6 @@ namespace ApiGateway
           .Rewrite( "http://10.168.95.71:5000/{path}" )
           .Match( "/MQ/{path*}" )
           .Rewrite( "http://10.168.95.72:5000/{path}" )
-          .Match( "//{host*}/{path*}" )
-          .Rewrite( "//10.168.95.74/{host}/{path}" )
-          .Match( "//{host}.jumony.net/{path*}" )
-          .Rewrite( "//jumony.net/{host}/{path}" )
         ).Emit()
       );
 
