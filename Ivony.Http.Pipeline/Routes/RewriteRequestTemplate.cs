@@ -9,7 +9,7 @@ namespace Ivony.Http.Pipeline.Routes
   public class RewriteRequestTemplate
   {
     private static readonly string schemeRegex = @"(?<scheme>[a-zA-Z]+):";
-    private static readonly string hostRegex = @"//(?<host>([a-zA-Z0-9\.\-]+))(:(?<port>[0-9]+))?";
+    private static readonly string hostRegex = @"//(?<host>[^:/]+)(:(?<port>[0-9]+))?";
     private static readonly string pathRegex = @"(?<path>[^?]*)";
     private static readonly string queryRegex = @"\?(?<query>.+)";
 

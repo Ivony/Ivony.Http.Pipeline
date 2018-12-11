@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Ivony.Http.Pipeline.Routes
 {

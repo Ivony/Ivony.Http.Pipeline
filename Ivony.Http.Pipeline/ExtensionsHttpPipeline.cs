@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
-using Ivony.Http.Pipeline.Routes;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Builder.Internal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Ivony.Http.Pipeline
 {
@@ -42,25 +33,6 @@ namespace Ivony.Http.Pipeline
     {
       return request => distributer.Handle( request );
     }
-
-
-
-
-    /// <summary>
-    /// get the HttpContext object
-    /// </summary>
-    /// <param name="request">request message</param>
-    /// <returns>HttpContext object</returns>
-    public static HttpContext GetHttpContext( this HttpRequestMessage request )
-    {
-      if ( request.Properties.TryGetValue( AspNetCoreCombinator.HttpContextAccessKey, out var value ) )
-        return (HttpContext) value;
-
-      else
-        return null;
-    }
-
-
 
 
   }

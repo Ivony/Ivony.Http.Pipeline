@@ -125,5 +125,12 @@ namespace Ivony.Http.Pipeline.Routes
 
       return values;
     }
+
+    public override string ToString()
+    {
+      return string.Join( '/', segments );
+    }
+
+
   }
 }

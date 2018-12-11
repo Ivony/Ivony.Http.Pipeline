@@ -32,7 +32,7 @@ namespace ApiGateway
 
       app
         .ForwardProxy( TransmitHeaderBehavior.All )
-        .RewriteHost( "www.163.com" )
+        .Rewrite( "/{path*}", "//www.163.com/{path}" )
         .Emit();
       /*
               .UseRouter( route => route

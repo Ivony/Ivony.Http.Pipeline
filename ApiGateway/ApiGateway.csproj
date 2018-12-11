@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ivony.Http.Pipeline\Ivony.Http.Pipeline.csproj" />
+    <ProjectReference Include="..\Ivony.Http.Pipeline.AspNetCore\Ivony.Http.Pipeline.AspNetCore.csproj" />
   </ItemGroup>
 
 </Project>

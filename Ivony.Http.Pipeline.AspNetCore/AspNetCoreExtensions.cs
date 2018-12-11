@@ -5,6 +5,8 @@ using System.Text;
 using Ivony.Http.Pipeline;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -46,6 +48,10 @@ namespace Microsoft.Extensions.DependencyInjection
       public HttpPipelineHandler Join( HttpPipelineHandler downstream )
       {
         _builder.Use( _accessPoint.Combine( downstream ) );
+        var logger = _builder.ApplicationServices.GetService<ILogger<AspNetCoreCombinator>>();
+        if ( logger != null )
+          logger.LogInformation( "http pipeline injected." );
+
         return null;
       }
     }
