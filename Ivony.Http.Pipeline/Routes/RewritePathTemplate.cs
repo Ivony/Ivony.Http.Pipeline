@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Ivony.Http.Pipeline.Routes
 {
-  public class RoutePathTemplate
+  public class RewritePathTemplate
   {
 
     private static readonly Regex pathTemplateRegex = new Regex( @"^(\/((?<segment>[\w]+)|(?<segment>\{[\w\*]+\})))*$", RegexOptions.Compiled );
@@ -16,7 +16,7 @@ namespace Ivony.Http.Pipeline.Routes
     private TemplateSegment[] segments;
 
 
-    public RoutePathTemplate( string pathTemplate )
+    public RewritePathTemplate( string pathTemplate )
     {
       var match = pathTemplateRegex.Match( pathTemplate );
       if ( match.Success == false )

@@ -16,12 +16,12 @@ namespace Ivony.Http.Pipeline.Routes
     /// <summary>
     /// upstream templates, match the request and extract route values
     /// </summary>
-    public RouteRequestTemplate[] Upstreams { get; }
+    public RewriteRequestTemplate[] Upstreams { get; }
 
     /// <summary>
     /// downstream template, rewrite thr request with route values
     /// </summary>
-    public RouteRequestTemplate Downstream { get; }
+    public RewriteRequestTemplate Downstream { get; }
 
 
 
@@ -30,14 +30,14 @@ namespace Ivony.Http.Pipeline.Routes
     /// </summary>
     /// <param name="upstreamTemplates">upstream templates</param>
     /// <param name="downstreamTemplate">downstream template</param>
-    public RouteRewriteRule( IReadOnlyList<RouteRequestTemplate> upstreamTemplates, RouteRequestTemplate downstreamTemplate )
+    public RouteRewriteRule( IReadOnlyList<RewriteRequestTemplate> upstreamTemplates, RewriteRequestTemplate downstreamTemplate )
     {
       Upstreams = upstreamTemplates.ToArray();
       Downstream = downstreamTemplate;
     }
 
 
-    public RouteRewriteRule( string upstream, string downstream ) : this( new[] { new RouteRequestTemplate( upstream ) }, new RouteRequestTemplate( downstream ) ) { }
+    public RouteRewriteRule( string upstream, string downstream ) : this( new[] { new RewriteRequestTemplate( upstream ) }, new RewriteRequestTemplate( downstream ) ) { }
 
 
 

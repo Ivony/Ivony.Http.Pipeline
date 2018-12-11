@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Ivony.Http.Pipeline.Routes
 {
-  public class RouteHostTemplate
+  public class RewriteHostTemplate
   {
 
     private readonly static Regex hostRegex = new Regex( @"^(?<segment>([\w-]+)|(\{[\w-*]+\}))(\.(?<segment>([\w-]+)|(\{[\w-*]+\})))*$" );
@@ -16,7 +16,7 @@ namespace Ivony.Http.Pipeline.Routes
     private string port;
 
 
-    public RouteHostTemplate( string hostTemplate )
+    public RewriteHostTemplate( string hostTemplate )
     {
 
       var match = hostRegex.Match( hostTemplate );

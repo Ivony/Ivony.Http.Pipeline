@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Ivony.Http.Pipeline.Routes
 {
-  public class RouteRequestTemplate
+  public class RewriteRequestTemplate
   {
     private static readonly string schemeRegex = @"(?<scheme>[a-zA-Z]+):";
     private static readonly string hostRegex = @"//(?<host>([a-zA-Z0-9\.\-]+))(:(?<port>[0-9]+))?";
@@ -18,7 +18,7 @@ namespace Ivony.Http.Pipeline.Routes
     private Regex urlRegex = new Regex( $"^(({schemeRegex})?{hostRegex})?{pathRegex}({queryRegex})?$", RegexOptions.Compiled );
 
 
-    public RouteRequestTemplate( string template )
+    public RewriteRequestTemplate( string template )
     {
 
       var match = urlRegex.Match( template );
@@ -29,16 +29,16 @@ namespace Ivony.Http.Pipeline.Routes
         Scheme = match.Groups["scheme"].Value;
 
       if ( match.Groups["host"].Success )
-        HostTemplate = new RouteHostTemplate( match.Groups["host"].Value );
+        HostTemplate = new RewriteHostTemplate( match.Groups["host"].Value );
 
       if ( match.Groups["port"].Success )
         Port = match.Groups["port"].Value;
 
 
-      PathTemplate = new RoutePathTemplate( match.Groups["path"].Value );
+      PathTemplate = new RewritePathTemplate( match.Groups["path"].Value );
 
       if ( match.Groups["query"].Success )
-        QueryStringTemplate = new RouteQueryStringTemplate( match.Groups["query"].Value );
+        QueryStringTemplate = new RewriteQueryStringTemplate( match.Groups["query"].Value );
     }
 
 
@@ -50,17 +50,17 @@ namespace Ivony.Http.Pipeline.Routes
     /// <summary>
     /// 路径模板
     /// </summary>
-    public RoutePathTemplate PathTemplate { get; }
+    public RewritePathTemplate PathTemplate { get; }
 
     /// <summary>
     /// 主机模板
     /// </summary>
-    public RouteHostTemplate HostTemplate { get; }
+    public RewriteHostTemplate HostTemplate { get; }
 
     /// <summary>
     /// 查询字符串模板
     /// </summary>
-    public RouteQueryStringTemplate QueryStringTemplate { get; }
+    public RewriteQueryStringTemplate QueryStringTemplate { get; }
 
     /// <summary>
     /// 端口号，如果有的话

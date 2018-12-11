@@ -43,23 +43,6 @@ namespace Ivony.Http.Pipeline
       return request => distributer.Handle( request );
     }
 
-    /// <summary>
-    /// get the HttpContext object
-    /// </summary>
-    /// <param name="request">request message</param>
-    /// <returns>HttpContext object</returns>
-    public static HttpContext GetHttpContext( this HttpRequestMessage request )
-    {
-      if ( request.Properties.TryGetValue( HttpPipelineAspNetCoreService.HttpContextAccessKey, out var value ) )
-        return (HttpContext) value;
-
-      else
-        return null;
-    }
-
-
-
-
 
 
     /// <summary>
@@ -74,6 +57,19 @@ namespace Ivony.Http.Pipeline
     }
 
 
+
+    /// <summary>
+    /// 使用 HTTP 请求处理管线
+    /// </summary>
+    /// <param name="application">ASP.NET Core 应用构建器</param>
+    /// <param name="configure">处理管线构建程序</param>
+    public static void UsePipeline( this IApplicationBuilder application, Func<IHttpPipeline, IHttpPipeline> configure )
+    {
+      var pipeline = configure( Ivony.Http.Pipeline.HttpPipeline.Blank );
+      application.UsePipeline( pipeline.Emit( application.ApplicationServices.GetService<IHttpPipelineEmitter>() ) );
+    }
+
+
     /// <summary>
     /// 使用 HTTP 请求处理管线
     /// </summary>
@@ -81,9 +77,27 @@ namespace Ivony.Http.Pipeline
     /// <param name="pipeline">HTTP 请求处理管线</param>
     public static void UsePipeline( this IApplicationBuilder application, HttpPipelineHandler pipeline )
     {
-      var service = application.ApplicationServices.GetService<IHttpPipelineAspNetCoreService>();
+      var service = application.ApplicationServices.GetService<IHttpPipelineAspNetCoreCombinator>();
       application.Use( service.CreateMiddleware( pipeline ) );
     }
+
+
+    /// <summary>
+    /// get the HttpContext object
+    /// </summary>
+    /// <param name="request">request message</param>
+    /// <returns>HttpContext object</returns>
+    public static HttpContext GetHttpContext( this HttpRequestMessage request )
+    {
+      if ( request.Properties.TryGetValue( HttpPipelineAspNetCoreCombinator.HttpContextAccessKey, out var value ) )
+        return (HttpContext) value;
+
+      else
+        return null;
+    }
+
+
+
 
   }
 }

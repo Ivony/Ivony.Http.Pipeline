@@ -20,7 +20,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( this IHttpPipeline pipeline, string template )
     {
-      return Rewrite( pipeline, new RouteRequestTemplate( template ) );
+      return Rewrite( pipeline, new RewriteRequestTemplate( template ) );
     }
 
     /// <summary>
@@ -29,7 +29,7 @@ namespace Ivony.Http.Pipeline
     /// <param name="pipeline">upstream pipeline</param>
     /// <param name="template">rewrite template.</param>
     /// <returns>pipeline with rewrite rule</returns>
-    public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RouteRequestTemplate template )
+    public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RewriteRequestTemplate template )
     {
       return pipeline.JoinPipeline( handler => request =>
       {
@@ -49,7 +49,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( this IHttpPipeline pipeline, string upstream, string downstream )
     {
-      return Rewrite( pipeline, new RouteRequestTemplate( upstream ), new RouteRequestTemplate( downstream ) );
+      return Rewrite( pipeline, new RewriteRequestTemplate( upstream ), new RewriteRequestTemplate( downstream ) );
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ namespace Ivony.Http.Pipeline
     /// <param name="upstream">upstream rule, or called route rule.</param>
     /// <param name="downstream">downstream rule, or called rewrite rule</param>
     /// <returns>pipeline with rewrite rule</returns>
-    public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RouteRequestTemplate upstream, RouteRequestTemplate downstream )
+    public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RewriteRequestTemplate upstream, RewriteRequestTemplate downstream )
     {
       var rewriter = new RouteRewriteRule( new[] { upstream }, downstream );
 
@@ -81,8 +81,8 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( this IHttpPipeline pipeline, params string[] templates )
     {
-      var upstreams = templates.Take( templates.Length - 1 ).Select( t => new RouteRequestTemplate( t ) ).ToArray();
-      var downstream = new RouteRequestTemplate( templates.Last() );
+      var upstreams = templates.Take( templates.Length - 1 ).Select( t => new RewriteRequestTemplate( t ) ).ToArray();
+      var downstream = new RewriteRequestTemplate( templates.Last() );
 
       return Rewrite( pipeline, upstreams, downstream );
     }
@@ -94,7 +94,7 @@ namespace Ivony.Http.Pipeline
     /// <param name="upstreams">upstream rule, or called route rule.</param>
     /// <param name="downstream">downstream rule, or called rewrite rule</param>
     /// <returns>pipeline with rewrite rule</returns>
-    public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RouteRequestTemplate[] upstreams, RouteRequestTemplate downstream )
+    public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RewriteRequestTemplate[] upstreams, RewriteRequestTemplate downstream )
     {
       var rewriter = new RouteRewriteRule( upstreams, downstream );
 

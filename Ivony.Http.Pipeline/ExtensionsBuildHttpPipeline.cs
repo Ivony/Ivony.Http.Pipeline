@@ -34,23 +34,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>请求处理管线</returns>
     public static IHttpPipeline JoinPipeline( this IHttpPipeline upstream, Func<HttpPipelineHandler, HttpPipelineHandler> downstream )
     {
-      return new HttpPipelineJointer( upstream, new HttpPipelineImplement( downstream ) );
-    }
-
-
-    private class HttpPipelineImplement : IHttpPipeline
-    {
-      private readonly Func<HttpPipelineHandler, HttpPipelineHandler> _pipeline;
-
-      public HttpPipelineImplement( Func<HttpPipelineHandler, HttpPipelineHandler> pipeline )
-      {
-        _pipeline = pipeline;
-      }
-
-      public HttpPipelineHandler Join( HttpPipelineHandler downstream )
-      {
-        return _pipeline( downstream );
-      }
+      return new HttpPipelineJointer( upstream, HttpPipeline.Create( downstream ) );
     }
 
 

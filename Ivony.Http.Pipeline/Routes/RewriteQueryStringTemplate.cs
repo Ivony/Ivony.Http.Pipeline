@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Ivony.Http.Pipeline.Routes
 {
-  public class RouteQueryStringTemplate
+  public class RewriteQueryStringTemplate
   {
 
-    public RouteQueryStringTemplate( string queryString )
+    public RewriteQueryStringTemplate( string queryString )
     {
 
     }

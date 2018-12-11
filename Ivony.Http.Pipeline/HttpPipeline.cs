@@ -15,15 +15,15 @@ namespace Ivony.Http.Pipeline
 
 
     /// <summary>
-    /// 下游管线
+    /// downstream pipeline
     /// </summary>
     protected HttpPipelineHandler Downstream { get; private set; }
 
     /// <summary>
-    /// 实现 Pipe 方法，将当前中间件接入到管线中
+    /// join downstream pipeline
     /// </summary>
-    /// <param name="downstream">下游管线</param>
-    /// <returns>接入了当前中间件的管线</returns>
+    /// <param name="downstream">downstream pipeline</param>
+    /// <returns></returns>
     public HttpPipelineHandler Join( HttpPipelineHandler downstream )
     {
       Downstream = downstream;

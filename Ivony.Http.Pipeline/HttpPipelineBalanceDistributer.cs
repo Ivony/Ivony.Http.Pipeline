@@ -10,7 +10,7 @@ namespace Ivony.Http.Pipeline
 
 
   /// <summary>
-  /// 实现一个平衡管线分发器，将 HTTP 请求尽可能平衡的分发给多个下游管线。
+  /// Implement a balanced pipeline distributor that distributes HTTP requests as balanced as possible to multiple downstream pipelines.
   /// </summary>
   public class HttpPipelineBalanceDistributer : IHttpPipelineDistributer
   {
@@ -20,10 +20,10 @@ namespace Ivony.Http.Pipeline
     public HttpPipelineHandler[] Pipelines { get; }
 
     /// <summary>
-    /// 获取下游管线
+    /// choose a downstream pipeline to distribute.
     /// </summary>
-    /// <param name="request">HTTP 请求数据</param>
-    /// <returns>要处理该请求的下游管线</returns>
+    /// <param name="request">HTTP request message</param>
+    /// <returns>downstream pipeline to handle this request</returns>
     public virtual HttpPipelineHandler Distribute( HttpRequestMessage request )
     {
       Interlocked.Increment( ref counter );
@@ -34,7 +34,7 @@ namespace Ivony.Http.Pipeline
 
 
     /// <summary>
-    /// 创建 HttpPipelineDispatcher 对象
+    /// create HttpPipelineDispatcher instance
     /// </summary>
     /// <param name="pipelines">下游管线</param>
     public HttpPipelineBalanceDistributer( params HttpPipelineHandler[] pipelines )

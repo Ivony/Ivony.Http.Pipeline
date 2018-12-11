@@ -15,14 +15,14 @@ namespace Ivony.Http.Pipeline.Routes
     public IRouteRulesBuilder Builder { get; }
 
 
-    private List<RouteRequestTemplate> templateList = new List<RouteRequestTemplate>();
+    private List<RewriteRequestTemplate> templateList = new List<RewriteRequestTemplate>();
 
     public RouteRewriteRuleBuilder Match( string template )
     {
-      return Match( new RouteRequestTemplate( template ) );
+      return Match( new RewriteRequestTemplate( template ) );
     }
 
-    public RouteRewriteRuleBuilder Match( RouteRequestTemplate template )
+    public RouteRewriteRuleBuilder Match( RewriteRequestTemplate template )
     {
       templateList.Add( template );
       return this;
@@ -30,11 +30,11 @@ namespace Ivony.Http.Pipeline.Routes
 
     public IRouteRulesBuilder Rewrite( string template )
     {
-      return Rewrite( new RouteRequestTemplate( template ) );
+      return Rewrite( new RewriteRequestTemplate( template ) );
     }
 
 
-    public IRouteRulesBuilder Rewrite( RouteRequestTemplate template )
+    public IRouteRulesBuilder Rewrite( RewriteRequestTemplate template )
     {
       Builder.AddRule( new RouteRewriteRule( templateList, template ) );
       return Builder;

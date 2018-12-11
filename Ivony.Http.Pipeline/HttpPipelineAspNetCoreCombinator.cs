@@ -11,10 +11,16 @@ using Microsoft.Extensions.Primitives;
 namespace Ivony.Http.Pipeline
 {
 
+
+  public interface IHttpPipelineAspNetCoreCombinator
+  {
+    Func<RequestDelegate, RequestDelegate> CreateMiddleware( HttpPipelineHandler pipeline );
+  }
+
   /// <summary>
   /// 辅助在 ASP.NET Core 上创建 HTTP 管线
   /// </summary>
-  public class HttpPipelineAspNetCoreService : IHttpPipelineAspNetCoreService
+  public class HttpPipelineAspNetCoreCombinator : IHttpPipelineAspNetCoreCombinator
   {
     internal static readonly string HttpContextAccessKey = "__HttpContext";
 

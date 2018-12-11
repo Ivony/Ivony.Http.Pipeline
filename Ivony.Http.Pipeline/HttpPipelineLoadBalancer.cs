@@ -10,7 +10,7 @@ namespace Ivony.Http.Pipeline
 {
 
   /// <summary>
-  /// 负载均衡器
+  /// load balancer
   /// </summary>
   public class HttpPipelineLoadBalancer : IHttpPipeline
   {

@@ -35,7 +35,7 @@ namespace Ivony.Http.Pipeline.Test
       {
         var pathSegments = PathSegments.Create( url.AbsolutePath );
 
-        var template = new RoutePathTemplate( "/{path*}" );
+        var template = new RewritePathTemplate( "/{path*}" );
         var values = template.GetRouteValues( pathSegments );
 
         Assert.AreEqual( values.Count, 1 );
@@ -45,7 +45,7 @@ namespace Ivony.Http.Pipeline.Test
       }
 
       {
-        var template = new RouteRequestTemplate( "http://163.com/news/{path*}" );
+        var template = new RewriteRequestTemplate( "http://163.com/news/{path*}" );
         var values = template.GetRouteValues( new RouteRequestData( new HttpRequestMessage( HttpMethod.Get, url ) ) );
 
         Assert.AreEqual( values.Count, 1 );
@@ -61,7 +61,7 @@ namespace Ivony.Http.Pipeline.Test
       var url = new Uri( "http://163.com/News/Test/1" );
       var pathSegments = PathSegments.Create( url.AbsolutePath );
 
-      var template = new RoutePathTemplate( "/{path}" );
+      var template = new RewritePathTemplate( "/{path}" );
       var values = new Dictionary<string, string>
       {
         ["path"] = "/a/b/c"
@@ -73,7 +73,7 @@ namespace Ivony.Http.Pipeline.Test
     [TestMethod]
     public void PathRouteRewrite()
     {
-      var rule = new RouteRewriteRule( new[] { new RouteRequestTemplate( "http://163.com/news/{path*}" ) }, new RouteRequestTemplate( "http://163.com/{path*}" ) );
+      var rule = new RouteRewriteRule( new[] { new RewriteRequestTemplate( "http://163.com/news/{path*}" ) }, new RewriteRequestTemplate( "http://163.com/{path*}" ) );
       var request = new HttpRequestMessage( HttpMethod.Get, "http://163.com/news/Test/TestNews" );
 
       request = rule.Rewrite( request );
