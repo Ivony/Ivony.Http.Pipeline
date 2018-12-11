@@ -39,8 +39,8 @@ namespace Ivony.Http.Pipeline
     public async Task<HttpResponseMessage> EmitRequest( HttpRequestMessage request )
     {
       request.Headers.Host = request.RequestUri.Host;
-      var response = await _client.SendAsync( request );
 
+      var response = await _client.SendAsync( request );
 
       response.Headers.TransferEncodingChunked = null;
       response.Headers.ConnectionClose = null;

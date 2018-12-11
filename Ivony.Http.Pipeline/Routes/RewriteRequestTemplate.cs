@@ -9,8 +9,8 @@ namespace Ivony.Http.Pipeline.Routes
   public class RewriteRequestTemplate
   {
     private static readonly string schemeRegex = @"(?<scheme>[a-zA-Z]+):";
-    private static readonly string hostRegex = @"//(?<host>[^:/]+)(:(?<port>[0-9]+))?";
-    private static readonly string pathRegex = @"(?<path>[^?]*)";
+    private static readonly string hostRegex = @"//(?<host>[^:/]+)(:(?<port>([0-9]+)|\?))?";
+    private static readonly string pathRegex = @"(?<path>/([^?]*))";
     private static readonly string queryRegex = @"\?(?<query>.+)";
 
 
@@ -127,8 +127,12 @@ namespace Ivony.Http.Pipeline.Routes
 
       builder.Host = HostTemplate.Rewrite( routeValues );
       builder.Path = PathTemplate.Rewrite( routeValues );
-      if ( Port != null )
+      if ( Port == null )
+        builder.Port = -1;
+
+      else if ( Port != "?" )
         builder.Port = int.Parse( Port );
+
 
       request.RequestUri = builder.Uri;
 

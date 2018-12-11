@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+
 using Ivony.Http.Pipeline;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -62,9 +60,9 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     /// <param name="pipeline">upstream pipeline</param>
     /// <returns>pipeline</returns>
-    public static IHttpPipeline Forward( this IApplicationBuilder application, TransmitHeaderBehavior transmit = TransmitHeaderBehavior.Nothing )
+    public static IHttpPipeline Forward( this IApplicationBuilder application )
     {
-      return application.UsePipeline( new AspNetCoreForwardCombinator( ForwardProxyMode.None, transmit ) );
+      return application.UsePipeline( new AspNetCoreForwardProxy( ForwardProxyMode.None ) );
     }
 
     /// <summary>
@@ -74,9 +72,9 @@ namespace Microsoft.Extensions.DependencyInjection
     /// <param name="transmit">transmit headers behavior</param>
     /// <param name="proxyMode">build proxy headers behavior</param>
     /// <returns>pipeline</returns>
-    public static IHttpPipeline ForwardProxy( this IApplicationBuilder application, TransmitHeaderBehavior transmit = TransmitHeaderBehavior.Nothing, ForwardProxyMode proxyMode = ForwardProxyMode.Legacy )
+    public static IHttpPipeline ForwardProxy( this IApplicationBuilder application, ForwardProxyMode proxyMode = ForwardProxyMode.Legacy )
     {
-      return application.UsePipeline( new AspNetCoreForwardCombinator( proxyMode, transmit ) );
+      return application.UsePipeline( new AspNetCoreForwardProxy( proxyMode ) );
     }
 
 

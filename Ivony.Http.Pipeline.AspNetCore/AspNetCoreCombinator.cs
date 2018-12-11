@@ -1,45 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
 namespace Ivony.Http.Pipeline
 {
-
-
-  /// <summary>
-  /// contract proxy headers build mode
-  /// </summary>
-  public enum ForwardProxyMode
-  {
-    /// <summary>just forward the request, not as a proxy</summary>
-    None,
-
-    /// <summary>build legacy proxy headers, like X-Forwarded-For, X-Forwarded-Host and X-Forwarded-Proto</summary>
-    Legacy,
-
-    /// <summary>build proxy headers using RFC7329</summary>
-    RFC7239
-  }
-
-
-
-  /// <summary>
-  /// contract transmit headers behavior
-  /// </summary>
-  public enum TransmitHeaderBehavior
-  {
-    /// <summary>dose not transmit any header.</summary>
-    Nothing,
-
-    /// <summary>transmit all headers.</summary>
-    All
-  }
 
 
   /// <summary>
@@ -56,13 +25,32 @@ namespace Ivony.Http.Pipeline
       context.Response.StatusCode = (int) response.StatusCode;
       context.Response.Headers.Clear();
 
+      var ignores = response.Headers.Connection;
+
       foreach ( var item in response.Headers )
+      {
+        if ( ignoreHeaders.Contains( item.Key ) )
+          continue;
+
+        if ( ignores.Contains( item.Key ) )
+          continue;
+
         context.Response.Headers.Add( item.Key, new StringValues( item.Value.ToArray() ) );
+      }
 
       foreach ( var item in response.Content.Headers )
+      {
+        if ( ignoreHeaders.Contains( item.Key ) )
+          continue;
+
+        if ( ignores.Contains( item.Key ) )
+          continue;
+
         context.Response.Headers.Add( item.Key, new StringValues( item.Value.ToArray() ) );
+      }
 
       await response.Content.CopyToAsync( context.Response.Body );
+
     }
 
 
@@ -74,11 +62,24 @@ namespace Ivony.Http.Pipeline
       request.RequestUri = CreateUri( context.Request );
 
 
+      var ignores = request.Headers.Connection;
+
       foreach ( var item in context.Request.Headers )
+      {
+        if ( ignoreHeaders.Contains( item.Key ) )
+          continue;
+
+        if ( ignores.Contains( item.Key ) )
+          continue;
+
         request.Headers.Add( item.Key, item.Value.AsEnumerable() );
+      }
 
       return Task.FromResult( request );
     }
+
+
+    protected readonly static HashSet<string> ignoreHeaders = new HashSet<string> { "Accept-Encoding", "Connection", "Content-Encoding", "Content-Length", "Keep-Alive", "Transfer-Encoding", "TE", "Accept-Transfer-Encoding", "Trailer", "Upgrade", "Proxy-Authorization", "Proxy-Authenticate" };
 
 
     protected virtual Uri CreateUri( HttpRequest request )
