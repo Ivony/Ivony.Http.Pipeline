@@ -30,7 +30,7 @@ namespace Ivony.Http.Pipeline
     /// <param name="upstream">上游管线</param>
     /// <param name="downstream">要接入的下游管线</param>
     /// <returns>请求处理管线</returns>
-    public static IHttpPipeline JoinPipeline( this IHttpPipeline upstream, Func<HttpPipelineHandler, HttpPipelineHandler> downstream )
+    public static IHttpPipeline JoinPipeline( this IHttpPipeline upstream, Func<IHttpPipelineHandler, IHttpPipelineHandler> downstream )
     {
       return new HttpPipelineJointer( upstream, HttpPipeline.Create( downstream ) );
     }
@@ -64,12 +64,12 @@ namespace Ivony.Http.Pipeline
     /// <param name="pipeline">上游管线</param>
     /// <param name="distributer">分发器</param>
     /// <returns>请求处理管线</returns>
-    public static HttpPipelineHandler Distribute( this IHttpPipeline pipeline, IHttpPipelineDistributer distributer )
+    public static IHttpPipelineHandler Distribute( this IHttpPipeline pipeline, IHttpPipelineDistributer distributer )
     {
       if ( distributer == null )
         throw new ArgumentNullException( nameof( distributer ) );
 
-      return pipeline.Join( request => distributer.Distribute( request )( request ) );
+      return pipeline.Join( distributer.AsHandler() );
     }
 
     /// <summary>
@@ -78,7 +78,7 @@ namespace Ivony.Http.Pipeline
     /// <param name="middleware">上游管线</param>
     /// <param name="pipelines">下游管线列表</param>
     /// <returns>请求处理管线</returns>
-    public static HttpPipelineHandler Distribute( this IHttpPipeline pipeline, params HttpPipelineHandler[] pipelines )
+    public static IHttpPipelineHandler Distribute( this IHttpPipeline pipeline, params IHttpPipelineHandler[] pipelines )
     {
       if ( pipelines == null )
         throw new ArgumentNullException( nameof( pipelines ) );
@@ -111,9 +111,9 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="pipeline">upstream pipeline</param>
     /// <returns>http pipeline handler</returns>
-    public static HttpPipelineHandler Emit( this IHttpPipeline pipeline )
+    public static IHttpPipelineHandler Emit( this IHttpPipeline pipeline )
     {
-      return pipeline.Join( new HttpPipelineEmitter() );
+      return pipeline.Join( new HttpPipelineEmitter().AsHandler() );
     }
 
 
@@ -124,9 +124,9 @@ namespace Ivony.Http.Pipeline
     /// <param name="pipeline">upstream pipeline</param>
     /// <param name="emitter">request emitter</param>
     /// <returns>http pipeline handler</returns>
-    public static HttpPipelineHandler Emit( this IHttpPipeline pipeline, IHttpPipelineEmitter emitter )
+    public static IHttpPipelineHandler Emit( this IHttpPipeline pipeline, IHttpPipelineEmitter emitter )
     {
-      return pipeline.Join( emitter.EmitRequest );
+      return pipeline.Join( emitter.AsHandler() );
     }
 
 
@@ -136,9 +136,9 @@ namespace Ivony.Http.Pipeline
     /// <param name="pipeline">upstream pipeline</param>
     /// <param name="handler">http message handler</param>
     /// <returns>http pipeline handler</returns>
-    public static HttpPipelineHandler Emit( this IHttpPipeline pipeline, HttpMessageHandler handler )
+    public static IHttpPipelineHandler Emit( this IHttpPipeline pipeline, HttpMessageHandler handler )
     {
-      return pipeline.Join( new HttpPipelineEmitter( handler ) );
+      return pipeline.Join( new HttpPipelineEmitter( handler ).AsHandler() );
     }
 
 

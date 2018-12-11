@@ -17,7 +17,7 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="rules">分发规则</param>
     /// <param name="defaultHandler">默认处理管线</param>
-    public HttpPipelineConditionDistributer( Func<HttpRequestMessage, HttpPipelineHandler>[] rules, HttpPipelineHandler defaultHandler )
+    public HttpPipelineConditionDistributer( Func<HttpRequestMessage, IHttpPipelineHandler>[] rules, IHttpPipelineHandler defaultHandler )
     {
       Rules = rules ?? throw new ArgumentNullException( nameof( rules ) );
       DefaultHandler = defaultHandler ?? throw new ArgumentNullException( nameof( defaultHandler ) );
@@ -27,12 +27,12 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// 分发规则
     /// </summary>
-    protected virtual Func<HttpRequestMessage, HttpPipelineHandler>[] Rules { get; }
+    protected virtual Func<HttpRequestMessage, IHttpPipelineHandler>[] Rules { get; }
 
     /// <summary>
     /// 默认处理管线（所有条件不满足时需要使用的管线）
     /// </summary>
-    protected virtual HttpPipelineHandler DefaultHandler { get; }
+    protected virtual IHttpPipelineHandler DefaultHandler { get; }
 
 
     /// <summary>
@@ -40,7 +40,7 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="request">HTTP 请求信息</param>
     /// <returns>处理管线</returns>
-    public HttpPipelineHandler Distribute( HttpRequestMessage request )
+    public IHttpPipelineHandler Distribute( HttpRequestMessage request )
     {
       foreach ( var ruleEntry in Rules )
       {

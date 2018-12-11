@@ -107,7 +107,7 @@ namespace Ivony.Http.Pipeline
       return request;
     }
 
-    Func<RequestDelegate, RequestDelegate> IHttpPipelineAccessPoint<Func<RequestDelegate, RequestDelegate>>.Combine( HttpPipelineHandler pipeline )
+    Func<RequestDelegate, RequestDelegate> IHttpPipelineAccessPoint<Func<RequestDelegate, RequestDelegate>>.Combine( IHttpPipelineHandler pipeline )
     {
       if ( pipeline == null )
         throw new ArgumentNullException( nameof( pipeline ) );
@@ -117,7 +117,7 @@ namespace Ivony.Http.Pipeline
       {
         var request = await CreateRequest( context );
 
-        var response = await pipeline( request );
+        var response = await pipeline.PrecessRequest( request );
 
         await ApplyResponse( context, response );
       };

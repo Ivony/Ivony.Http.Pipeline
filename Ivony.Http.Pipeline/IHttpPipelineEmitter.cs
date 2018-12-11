@@ -5,6 +5,6 @@ namespace Ivony.Http.Pipeline
 {
   public interface IHttpPipelineEmitter
   {
-    Task<HttpResponseMessage> EmitRequest( HttpRequestMessage request );
+    ValueTask<HttpResponseMessage> EmitRequest( HttpRequestMessage request );
   }
 }

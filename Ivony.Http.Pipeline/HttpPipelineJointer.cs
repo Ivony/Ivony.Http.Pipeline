@@ -15,7 +15,7 @@
       _downstream = downstream;
     }
 
-    HttpPipelineHandler IHttpPipeline.Join( HttpPipelineHandler handler )
+    IHttpPipelineHandler IHttpPipeline.Join( IHttpPipelineHandler handler )
     {
       return _upstream.Join( _downstream.Join( handler ) );
     }

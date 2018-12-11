@@ -24,7 +24,7 @@ namespace Ivony.Http.Pipeline
 
 
 
-    public HttpPipelineHandler Join( HttpPipelineHandler downstream )
+    public IHttpPipelineHandler Join( IHttpPipelineHandler downstream )
     {
       var distributer = new HttpPipelineBalanceDistributer( _pipelines.Select( item => item.Join( downstream ) ).ToArray() );
       return distributer.AsHandler();

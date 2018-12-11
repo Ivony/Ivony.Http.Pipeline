@@ -7,7 +7,7 @@ namespace Ivony.Http.Pipeline
   public interface IHttpPipelineAccessPoint<T>
   {
 
-    T Combine( HttpPipelineHandler pipeline );
+    T Combine( IHttpPipelineHandler pipeline );
 
   }
 }

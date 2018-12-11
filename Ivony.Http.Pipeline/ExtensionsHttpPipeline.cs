@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline
@@ -18,22 +19,53 @@ namespace Ivony.Http.Pipeline
     /// <param name="distributer">管线分发器</param>
     /// <param name="request">要处理的请求</param>
     /// <returns>处理结果</returns>
-    public static Task<HttpResponseMessage> Handle( this IHttpPipelineDistributer distributer, HttpRequestMessage request )
+    public static ValueTask<HttpResponseMessage> Handle( this IHttpPipelineDistributer distributer, HttpRequestMessage request )
     {
-      return distributer.Distribute( request )( request );
+      return new DistributerHandler( distributer ).PrecessRequest( request );
     }
 
 
-    /// <summary>
-    /// 将管线分发器转换为处理器
-    /// </summary>
-    /// <param name="distributer">管线分发器</param>
-    /// <returns>管线处理器</returns>
-    public static HttpPipelineHandler AsHandler( this IHttpPipelineDistributer distributer )
+    public static IHttpPipelineHandler AsHandler( this IHttpPipelineDistributer distributer )
     {
-      return request => distributer.Handle( request );
+      return new DistributerHandler( distributer );
     }
 
+    private class DistributerHandler : IHttpPipelineHandler
+    {
+      private readonly IHttpPipelineDistributer _distributer;
+
+      public DistributerHandler( IHttpPipelineDistributer distributer )
+      {
+        _distributer = distributer;
+      }
+
+      public ValueTask<HttpResponseMessage> PrecessRequest( HttpRequestMessage request )
+      {
+        return _distributer.Distribute( request ).PrecessRequest( request );
+      }
+    }
+
+
+
+    public static IHttpPipelineHandler AsHandler( this IHttpPipelineEmitter emitter )
+    {
+      return new EmitterHandler( emitter );
+    }
+
+    private class EmitterHandler : IHttpPipelineHandler
+    {
+      private readonly IHttpPipelineEmitter _emitter;
+
+      public EmitterHandler( IHttpPipelineEmitter emitter )
+      {
+        _emitter = emitter;
+      }
+
+      public ValueTask<HttpResponseMessage> PrecessRequest( HttpRequestMessage request )
+      {
+        return _emitter.EmitRequest( request );
+      }
+    }
 
   }
 }

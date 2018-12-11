@@ -17,14 +17,14 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// downstream pipeline
     /// </summary>
-    protected HttpPipelineHandler Downstream { get; private set; }
+    protected IHttpPipelineHandler Downstream { get; private set; }
 
     /// <summary>
     /// join downstream pipeline
     /// </summary>
     /// <param name="downstream">downstream pipeline</param>
     /// <returns></returns>
-    public HttpPipelineHandler Join( HttpPipelineHandler downstream )
+    public IHttpPipelineHandler Join( IHttpPipelineHandler downstream )
     {
       Downstream = downstream;
       return request => ProcessRequest( request );
@@ -36,7 +36,7 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="pipeline">一个处理管线方法</param>
     /// <returns></returns>
-    public static IHttpPipeline Create( Func<HttpPipelineHandler, HttpPipelineHandler> pipeline )
+    public static IHttpPipeline Create( Func<IHttpPipelineHandler, IHttpPipelineHandler> pipeline )
     {
       return new PipelineWrapper( pipeline );
     }
@@ -47,9 +47,9 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="request">请求信息</param>
     /// <returns>响应信息</returns>
-    protected virtual Task<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+    protected virtual ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
     {
-      return Downstream( request );
+      return Downstream.PrecessRequest( request );
     }
 
 
@@ -62,7 +62,7 @@ namespace Ivony.Http.Pipeline
 
     private class BlankPipeline : IHttpPipeline
     {
-      public HttpPipelineHandler Join( HttpPipelineHandler downstream )
+      public IHttpPipelineHandler Join( IHttpPipelineHandler downstream )
       {
         return downstream;
       }
@@ -75,14 +75,14 @@ namespace Ivony.Http.Pipeline
 
     private class PipelineWrapper : IHttpPipeline
     {
-      private Func<HttpPipelineHandler, HttpPipelineHandler> _pipeline;
+      private Func<IHttpPipelineHandler, IHttpPipelineHandler> _pipeline;
 
-      public PipelineWrapper( Func<HttpPipelineHandler, HttpPipelineHandler> pipeline )
+      public PipelineWrapper( Func<IHttpPipelineHandler, IHttpPipelineHandler> pipeline )
       {
         _pipeline = pipeline;
       }
 
-      public HttpPipelineHandler Join( HttpPipelineHandler downstream )
+      public IHttpPipelineHandler Join( IHttpPipelineHandler downstream )
       {
         return _pipeline( downstream );
       }

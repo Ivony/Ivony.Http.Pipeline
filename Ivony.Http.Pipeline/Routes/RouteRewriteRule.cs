@@ -80,7 +80,7 @@ namespace Ivony.Http.Pipeline.Routes
         return Match( new RouteRequestData( request ) );
     }
 
-    public HttpPipelineHandler Join( HttpPipelineHandler handler )
+    public IHttpPipelineHandler Join( IHttpPipelineHandler handler )
     {
       return request =>
       {

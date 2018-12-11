@@ -36,7 +36,7 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="request">要发送的请求</param>
     /// <returns>响应信息</returns>
-    public async Task<HttpResponseMessage> EmitRequest( HttpRequestMessage request )
+    public async ValueTask<HttpResponseMessage> EmitRequest( HttpRequestMessage request )
     {
       request.Headers.Host = request.RequestUri.Host;
 
@@ -48,13 +48,6 @@ namespace Ivony.Http.Pipeline
       return response;
     }
 
-
-
-
-    public static implicit operator HttpPipelineHandler( HttpPipelineEmitter emitter )
-    {
-      return emitter.EmitRequest;
-    }
 
   }
 }

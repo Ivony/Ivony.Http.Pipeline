@@ -14,6 +14,6 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="request">HTTP request message</param>
     /// <returns>a handler to handle this request</returns>
-    HttpPipelineHandler Distribute( HttpRequestMessage request );
+    IHttpPipelineHandler Distribute( HttpRequestMessage request );
   }
 }

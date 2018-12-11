@@ -43,7 +43,7 @@ namespace Microsoft.Extensions.DependencyInjection
         _accessPoint = accessPoint ?? throw new ArgumentNullException( nameof( accessPoint ) );
       }
 
-      public HttpPipelineHandler Join( HttpPipelineHandler downstream )
+      public IHttpPipelineHandler Join( IHttpPipelineHandler downstream )
       {
         _builder.Use( _accessPoint.Combine( downstream ) );
         var logger = _builder.ApplicationServices.GetService<ILogger<AspNetCoreCombinator>>();
@@ -83,7 +83,7 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     /// <param name="application">ASP.NET Core 应用构建器</param>
     /// <param name="configure">处理管线构建程序</param>
-    public static void UsePipeline( this IApplicationBuilder application, Func<IHttpPipeline, HttpPipelineHandler> configure )
+    public static void UsePipeline( this IApplicationBuilder application, Func<IHttpPipeline, IHttpPipelineHandler> configure )
     {
       var pipeline = configure( Ivony.Http.Pipeline.HttpPipeline.Blank );
       application.UsePipeline( pipeline );
@@ -108,7 +108,7 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     /// <param name="application">ASP.NET Core 应用构建器</param>
     /// <param name="pipeline">HTTP 请求处理管线</param>
-    public static void UsePipeline( this IApplicationBuilder application, HttpPipelineHandler pipeline )
+    public static void UsePipeline( this IApplicationBuilder application, IHttpPipelineHandler pipeline )
     {
 
       {

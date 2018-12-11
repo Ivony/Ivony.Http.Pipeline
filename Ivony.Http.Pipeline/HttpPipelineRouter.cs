@@ -39,9 +39,9 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="downstream">downstream pipeline handler</param>
     /// <returns>a new pipeline handler with route rules.</returns>
-    public HttpPipelineHandler Join( HttpPipelineHandler downstream )
+    public IHttpPipelineHandler Join( IHttpPipelineHandler downstream )
     {
-      var _rules = Rules.Select( rule => (Func<HttpRequestMessage, HttpPipelineHandler>) (request =>
+      var _rules = Rules.Select( rule => (Func<HttpRequestMessage, IHttpPipelineHandler>) (request =>
       {
         var values = rule.Match( new RouteRequestData( request ) );
         if ( values == null )
