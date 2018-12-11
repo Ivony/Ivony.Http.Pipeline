@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using Microsoft.AspNetCore.Builder;
 
 namespace Ivony.Http.Pipeline
 {
@@ -106,29 +107,6 @@ namespace Ivony.Http.Pipeline
       throw new NotImplementedException();
     }
 
-
-
-    /// <summary>
-    /// forward request to downstream pipeline
-    /// </summary>
-    /// <param name="pipeline">upstream pipeline</param>
-    /// <returns>pipeline</returns>
-    public static IHttpPipeline Forward( this IHttpPipeline pipeline, TransmitHeaderBehavior transmit = TransmitHeaderBehavior.Nothing )
-    {
-      return pipeline.JoinPipeline( new HttpPipelineForward( ForwardProxyMode.None, transmit ) );
-    }
-
-    /// <summary>
-    /// insert a forward proxy to pipeline
-    /// </summary>
-    /// <param name="pipeline">upstream pipeline</param>
-    /// <param name="transmit">transmit headers behavior</param>
-    /// <param name="proxyMode">build proxy headers behavior</param>
-    /// <returns>pipeline</returns>
-    public static IHttpPipeline UseProxy( this IHttpPipeline pipeline, TransmitHeaderBehavior transmit = TransmitHeaderBehavior.Nothing, ForwardProxyMode proxyMode = ForwardProxyMode.Legacy )
-    {
-      return pipeline.JoinPipeline( new HttpPipelineForward( proxyMode, transmit ) );
-    }
 
 
     /// <summary>
