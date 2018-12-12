@@ -89,7 +89,7 @@ namespace Ivony.Http.Pipeline.Test
     [TestMethod]
     public void PathRouteRewrite()
     {
-      var rule = new RewriteRule( new[] { new RewriteRequestTemplate( "http://163.com/news/{path*}" ) }, new RewriteRequestTemplate( "http://163.com/{path*}" ) );
+      var rule = RewriteRule.Create( "http://163.com/news/{path*}", "http://163.com/{path*}" );
       var request = new HttpRequestMessage( HttpMethod.Get, "http://163.com/news/Test/TestNews" );
 
       request = rule.Rewrite( request );

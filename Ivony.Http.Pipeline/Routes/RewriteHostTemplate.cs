@@ -65,7 +65,7 @@ namespace Ivony.Http.Pipeline.Routes
         for ( var i = 1; i < length + 1; i++ )
         {
 
-          var item = segments[length - i];
+          var item = segments[segments.Length - i];
           var hostItem = host[host.Count - i];
           if ( item.Type == SegmentType.Dynamic )
             result.Add( new KeyValuePair<string, string>( item.Value, hostItem ) );

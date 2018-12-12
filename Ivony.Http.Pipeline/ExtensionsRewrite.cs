@@ -30,7 +30,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RewriteRequestTemplate template )
     {
-      var rewriter = new RewriteRule( new RewriteRequestTemplate[0], template );
+      var rewriter = RewriteRule.Create( template );
       return pipeline.JoinPipeline( rewriter );
     }
 
@@ -45,7 +45,8 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( this IHttpPipeline pipeline, string upstream, string downstream )
     {
-      return Rewrite( pipeline, new RewriteRequestTemplate( upstream ), new RewriteRequestTemplate( downstream ) );
+      var rewriter = RewriteRule.Create( upstream, downstream );
+      return pipeline.JoinPipeline( rewriter );
     }
 
     /// <summary>
@@ -57,10 +58,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RewriteRequestTemplate upstream, RewriteRequestTemplate downstream )
     {
-      var rewriter = new RewriteRule( new[] { upstream }, downstream );
-
-
-
+      var rewriter = RewriteRule.Create( upstream, downstream );
       return pipeline.JoinPipeline( rewriter );
     }
 
@@ -78,10 +76,9 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( this IHttpPipeline pipeline, params string[] templates )
     {
-      var upstreams = templates.Take( templates.Length - 1 ).Select( t => new RewriteRequestTemplate( t ) ).ToArray();
-      var downstream = new RewriteRequestTemplate( templates.Last() );
 
-      return Rewrite( pipeline, upstreams, downstream );
+      var rewriter = RewriteRule.Create( templates );
+      return pipeline.JoinPipeline( rewriter );
     }
 
     /// <summary>

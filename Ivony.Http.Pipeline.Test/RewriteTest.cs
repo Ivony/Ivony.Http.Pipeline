@@ -23,7 +23,32 @@ namespace Ivony.Http.Pipeline.Test
     {
       var request = CreateRequest();
 
-      var rule = new RewriteRule( "/{path*}", "//www.jumony.net/{path}" );
+      var rule = RewriteRule.Create( "/{path*}", "//www.jumony.net/{path}" );
+      request = rule.Rewrite( request );
+
+      Assert.AreEqual( request.RequestUri.AbsoluteUri, "http://www.jumony.net/News/Test/1" );
+
+    }
+
+
+    [TestMethod]
+    public void Host2()
+    {
+      var request = CreateRequest();
+
+      var rule = RewriteRule.Create( "//{host}.163.com/{path*}", "//{host}.jumony.net/{path}" );
+      request = rule.Rewrite( request );
+
+      Assert.AreEqual( request.RequestUri.AbsoluteUri, "http://www.jumony.net/News/Test/1" );
+
+    }
+
+    [TestMethod]
+    public void Host3()
+    {
+      var request = CreateRequest();
+
+      var rule = RewriteRule.Create( "//{host*}.163.com/{path*}", "//{host}.jumony.net/{path}" );
       request = rule.Rewrite( request );
 
       Assert.AreEqual( request.RequestUri.AbsoluteUri, "http://www.jumony.net/News/Test/1" );
@@ -37,7 +62,7 @@ namespace Ivony.Http.Pipeline.Test
     {
       var request = CreateRequest();
 
-      var rule = new RewriteRule( "/{path*}", "//www.jumony.net:1234/{path}" );
+      var rule = RewriteRule.Create( "/{path*}", "//www.jumony.net:1234/{path}" );
       request = rule.Rewrite( request );
 
       Assert.AreEqual( request.RequestUri.AbsoluteUri, "http://www.jumony.net:1234/News/Test/1" );
@@ -48,7 +73,7 @@ namespace Ivony.Http.Pipeline.Test
     {
       var request = CreateRequest();
 
-      var rule = new RewriteRule( "/{path*}", "//www.jumony.net:?/{path}" );
+      var rule = RewriteRule.Create( "/{path*}", "//www.jumony.net:?/{path}" );
       request = rule.Rewrite( request );
 
       Assert.AreEqual( request.RequestUri.AbsoluteUri, "http://www.jumony.net:8080/News/Test/1" );
@@ -59,7 +84,7 @@ namespace Ivony.Http.Pipeline.Test
     {
       var request = CreateRequest();
 
-      var rule = new RewriteRule( "//{host*}/{path*}", "//proxy.net/{host}/{path}" );
+      var rule = RewriteRule.Create( "//{host*}/{path*}", "//proxy.net/{host}/{path}" );
       request = rule.Rewrite( request );
 
       Assert.AreEqual( request.RequestUri.AbsoluteUri, "http://proxy.net/www.163.com/News/Test/1" );

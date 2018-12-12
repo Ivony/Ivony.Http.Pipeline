@@ -44,7 +44,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with router</returns>
     public static IHttpPipeline UseRouter( this IHttpPipeline pipeline, params (string upstreamTemplate, string downstreamTemplate)[] rules )
     {
-      return UseRouter( pipeline, rules.Select( r => new RewriteRule( r.upstreamTemplate, r.downstreamTemplate ) ).ToArray() );
+      return UseRouter( pipeline, rules.Select( r => RewriteRule.Create( r.upstreamTemplate, r.downstreamTemplate ) ).ToArray() );
     }
 
     /// <summary>

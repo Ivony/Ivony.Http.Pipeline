@@ -36,7 +36,68 @@ namespace Ivony.Http.Pipeline.Routes
     }
 
 
-    public RewriteRule( string upstream, string downstream ) : this( new[] { new RewriteRequestTemplate( upstream ) }, new RewriteRequestTemplate( downstream ) ) { }
+
+    public static RewriteRule Create( string template )
+    {
+      return Create( new RewriteRequestTemplate( template ) );
+    }
+
+    private static RewriteRule Create( RewriteRequestTemplate template )
+    {
+      return new RewriteRule( new RewriteRequestTemplate[0], template );
+    }
+
+
+
+    public static RewriteRule Create( string upstream, string downstream )
+    {
+      return Create( new RewriteRequestTemplate( upstream ), new RewriteRequestTemplate( downstream ) );
+    }
+
+    public static RewriteRule Create( RewriteRequestTemplate upstream, RewriteRequestTemplate downstream )
+    {
+      return new RewriteRule( new[] { upstream }, downstream );
+    }
+
+
+
+    public static RewriteRule Create( string[] upstreams, string downstream )
+    {
+      return Create( upstreams.Select( item => new RewriteRequestTemplate( item ) ).ToArray(), new RewriteRequestTemplate( downstream ) );
+    }
+
+    public static RewriteRule Create( RewriteRequestTemplate[] upstreams, RewriteRequestTemplate downstream )
+    {
+      return new RewriteRule( upstreams, downstream );
+    }
+
+
+
+    public static RewriteRule Create( params string[] templates )
+    {
+      if ( templates.Length == 0 )
+        throw new ArgumentOutOfRangeException( nameof( templates ) );
+
+
+      return Create( templates.Select( item => new RewriteRequestTemplate( item ) ).ToArray() );
+    }
+
+
+    public static RewriteRule Create( params RewriteRequestTemplate[] templates )
+    {
+      if ( templates.Length == 0 )
+        throw new ArgumentOutOfRangeException( nameof( templates ) );
+
+      else if ( templates.Length == 1 )
+        return Create( templates[0] );
+
+
+
+      var upstreams = templates.Take( templates.Length - 1 ).ToArray();
+      var downstream = templates.Last();
+
+      return new RewriteRule( upstreams, downstream );
+    }
 
 
 
