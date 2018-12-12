@@ -20,6 +20,7 @@ namespace Ivony.Http.Pipeline.Routes
     public RouteRequestData( HttpRequestMessage request )
     {
       Path = PathSegments.Create( request.RequestUri.AbsolutePath );
+      Host = HostSegments.Create( request.RequestUri.Host );
       Scheme = request.RequestUri.Scheme;
       QueryString = new ReadOnlyCollection<(string name, string value)>( ParseQueryString( request.RequestUri.Query ).ToArray() );
     }
@@ -90,24 +91,30 @@ namespace Ivony.Http.Pipeline.Routes
     public string Scheme { get; }
 
     /// <summary>
-    /// 路径
+    ///  absoluate path segments
     /// </summary>
     public PathSegments Path { get; }
 
     /// <summary>
-    /// 查询字符串
+    /// query string
     /// </summary>
     public IReadOnlyList<(string name, string value)> QueryString { get; }
 
     /// <summary>
-    /// HTTP 头信息
+    /// HTTP headers
     /// </summary>
     public IReadOnlyDictionary<string, string> Headers { get; }
 
     /// <summary>
-    /// Host 信息
+    /// host segments
     /// </summary>
-    public string Host { get; }
+    public HostSegments Host { get; }
+
+
+    /// <summary>
+    /// port information
+    /// </summary>
+    public int? Port { get; }
 
   }
 }

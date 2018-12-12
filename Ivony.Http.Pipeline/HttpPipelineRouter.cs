@@ -35,7 +35,7 @@ namespace Ivony.Http.Pipeline
 
 
     /// <summary>
-    /// implement Pipe method to route request.
+    /// implement Join method to route request.
     /// </summary>
     /// <param name="downstream">downstream pipeline handler</param>
     /// <returns>a new pipeline handler with route rules.</returns>

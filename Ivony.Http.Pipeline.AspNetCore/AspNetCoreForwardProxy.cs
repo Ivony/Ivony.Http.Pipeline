@@ -49,7 +49,7 @@ namespace Ivony.Http.Pipeline
           break;
 
         case ForwardProxyMode.Legacy:
-          request.Headers.Add( "X-Forwarded-For", context.Connection.LocalIpAddress.ToString() );
+          request.Headers.Add( "X-Forwarded-For", context.Connection.RemoteIpAddress.ToString() );
           request.Headers.Add( "X-Forwarded-Host", context.Request.Host.Value );
           request.Headers.Add( "X-Forwarded-Proto", context.Request.Protocol );
 

@@ -31,7 +31,7 @@ namespace Ivony.Http.Pipeline.Routes
           throw new FormatException( "infinity dynamic segment must in the last of template" );
       }
 
-      var set = new HashSet<string>( StringComparer.FromComparison( stringComparison ) );
+      var set = new HashSet<string>( stringComparer );
       foreach ( var s in segments )
       {
         if ( s.Type == SegmentType.Dynamic || s.Type == SegmentType.InfinityDynamic )
@@ -71,7 +71,7 @@ namespace Ivony.Http.Pipeline.Routes
     }
 
 
-    private readonly StringComparison stringComparison = StringComparison.OrdinalIgnoreCase;
+    private readonly StringComparer stringComparer = StringComparer.OrdinalIgnoreCase;
 
     public IDictionary<string, string> GetRouteValues( PathSegments pathSegments )
     {
@@ -86,7 +86,7 @@ namespace Ivony.Http.Pipeline.Routes
         switch ( template.Type )
         {
           case SegmentType.Static:
-            if ( template.Value.Equals( segment, stringComparison ) == false )
+            if ( stringComparer.Equals( template.Value, segment ) == false )
               return null;
 
             i++;

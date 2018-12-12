@@ -10,12 +10,12 @@ namespace Ivony.Http.Pipeline.Routes
   {
     private static readonly string schemeRegex = @"(?<scheme>[a-zA-Z]+):";
     private static readonly string hostRegex = @"//(?<host>[^:/]+)(:(?<port>([0-9]+)|\?))?";
-    private static readonly string pathRegex = @"(?<path>/([^?]*))";
+    private static readonly string pathRegex = @"(?<path>/((?!/)[^?]*))";
     private static readonly string queryRegex = @"\?(?<query>.+)";
 
 
 
-    private Regex urlRegex = new Regex( $"^(({schemeRegex})?{hostRegex})?{pathRegex}({queryRegex})?$", RegexOptions.Compiled );
+    private Regex urlRegex = new Regex( $"^(?>({schemeRegex})?{hostRegex})?(?>{pathRegex})(?>{queryRegex})?$", RegexOptions.Compiled );
 
 
     public RewriteRequestTemplate( string template )
@@ -69,6 +69,9 @@ namespace Ivony.Http.Pipeline.Routes
 
 
 
+    private StringComparer stringComparer = StringComparer.OrdinalIgnoreCase;
+
+
     /// <summary>
     /// 从请求中解析出路由值
     /// </summary>
@@ -77,11 +80,11 @@ namespace Ivony.Http.Pipeline.Routes
     public IReadOnlyDictionary<string, string> GetRouteValues( RouteRequestData request )
     {
 
-      if ( Scheme != null && Scheme.Equals( request.Scheme, StringComparison.OrdinalIgnoreCase ) == false )
+      if ( Scheme != null && stringComparer.Equals( Scheme, request.Scheme ) == false )
         return null;
 
 
-      var routeValues = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase );
+      var routeValues = new Dictionary<string, string>( stringComparer );
 
       if ( HostTemplate != null )
       {

@@ -63,20 +63,20 @@ namespace Ivony.Http.Pipeline.Routes
 
 
     /// <summary>
-    /// 重写请求
+    /// rewrite request
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
     public HttpRequestMessage Rewrite( HttpRequestMessage request )
     {
-      var routeValues = GetRouteValues( request );
+      var routeValues = TryGetRouteValues( request );
       if ( routeValues == null )
         return request;
 
       return Downstream.RewriteRequest( request, routeValues );
     }
 
-    private IReadOnlyDictionary<string, string> GetRouteValues( HttpRequestMessage request )
+    private IReadOnlyDictionary<string, string> TryGetRouteValues( HttpRequestMessage request )
     {
       var routeData = request.GetRouteData();
       if ( routeData?.RouteRule == this )
