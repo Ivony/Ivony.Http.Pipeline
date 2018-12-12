@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Ivony.Http.Pipeline.Routes;
 
 namespace Ivony.Http.Pipeline
@@ -28,11 +30,8 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RewriteRequestTemplate template )
     {
-      return pipeline.JoinPipeline( handler => request =>
-      {
-        request = template.RewriteRequest( request, new Dictionary<string, string>() );
-        return handler( request );
-      } );
+      var rewriter = new RewriteRule( new RewriteRequestTemplate[0], template );
+      return pipeline.JoinPipeline( rewriter );
     }
 
 
@@ -58,14 +57,15 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RewriteRequestTemplate upstream, RewriteRequestTemplate downstream )
     {
-      var rewriter = new RouteRewriteRule( new[] { upstream }, downstream );
+      var rewriter = new RewriteRule( new[] { upstream }, downstream );
 
-      return pipeline.JoinPipeline( handler => request =>
-      {
-        request = rewriter.Rewrite( request );
-        return handler( request );
-      } );
+
+
+      return pipeline.JoinPipeline( rewriter );
     }
+
+
+
 
 
 
@@ -93,13 +93,9 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RewriteRequestTemplate[] upstreams, RewriteRequestTemplate downstream )
     {
-      var rewriter = new RouteRewriteRule( upstreams, downstream );
+      var rewriter = new RewriteRule( upstreams, downstream );
 
-      return pipeline.JoinPipeline( handler => request =>
-      {
-        request = rewriter.Rewrite( request );
-        return handler( request );
-      } );
+      return pipeline.JoinPipeline( rewriter );
     }
 
 

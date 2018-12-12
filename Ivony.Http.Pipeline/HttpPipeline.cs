@@ -26,8 +26,7 @@ namespace Ivony.Http.Pipeline
     /// <returns></returns>
     public IHttpPipelineHandler Join( IHttpPipelineHandler downstream )
     {
-      Downstream = downstream;
-      return request => ProcessRequest( request );
+      return new HttpPipelineHandler( this, downstream );
     }
 
 
@@ -47,9 +46,9 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="request">请求信息</param>
     /// <returns>响应信息</returns>
-    protected virtual ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+    protected virtual ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, IHttpPipelineHandler downstream )
     {
-      return Downstream.PrecessRequest( request );
+      return downstream.ProcessRequest( request );
     }
 
 
@@ -59,6 +58,24 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     public static IHttpPipeline Blank { get; } = new BlankPipeline();
 
+
+
+    private class HttpPipelineHandler : IHttpPipelineHandler
+    {
+      private readonly HttpPipeline _pipeline;
+      private readonly IHttpPipelineHandler _downstream;
+
+      public HttpPipelineHandler( HttpPipeline pipeline, IHttpPipelineHandler downstream )
+      {
+        _pipeline = pipeline;
+        _downstream = downstream;
+      }
+
+      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+      {
+        return _pipeline.ProcessRequest( request, _downstream );
+      }
+    }
 
     private class BlankPipeline : IHttpPipeline
     {

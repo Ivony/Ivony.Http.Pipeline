@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline.Routes
 {
   /// <summary>
   /// route and rewrite request rule
   /// </summary>
-  public class RouteRewriteRule : IHttpPipelineRewriteRule, IHttpPipelineRouteRule, IHttpPipeline
+  public class RewriteRule : IHttpPipelineRewriteRule, IHttpPipelineRouteRule, IHttpPipeline
   {
 
     /// <summary>
@@ -27,14 +29,14 @@ namespace Ivony.Http.Pipeline.Routes
     /// </summary>
     /// <param name="upstreamTemplates">upstream templates</param>
     /// <param name="downstreamTemplate">downstream template</param>
-    public RouteRewriteRule( IReadOnlyList<RewriteRequestTemplate> upstreamTemplates, RewriteRequestTemplate downstreamTemplate )
+    public RewriteRule( IReadOnlyList<RewriteRequestTemplate> upstreamTemplates, RewriteRequestTemplate downstreamTemplate )
     {
       Upstreams = upstreamTemplates.ToArray();
       Downstream = downstreamTemplate;
     }
 
 
-    public RouteRewriteRule( string upstream, string downstream ) : this( new[] { new RewriteRequestTemplate( upstream ) }, new RewriteRequestTemplate( downstream ) ) { }
+    public RewriteRule( string upstream, string downstream ) : this( new[] { new RewriteRequestTemplate( upstream ) }, new RewriteRequestTemplate( downstream ) ) { }
 
 
 
@@ -45,6 +47,10 @@ namespace Ivony.Http.Pipeline.Routes
     /// <returns></returns>
     public IReadOnlyDictionary<string, string> Match( RouteRequestData requestData )
     {
+
+      if ( Upstreams.Any() == false )
+        return new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase );
+
       foreach ( var item in Upstreams )
       {
         var values = item.GetRouteValues( requestData );
@@ -76,17 +82,35 @@ namespace Ivony.Http.Pipeline.Routes
       if ( routeData?.RouteRule == this )
         return routeData.Values;
 
-      else
+      else if ( Upstreams.Any() )
         return Match( new RouteRequestData( request ) );
+
+      else
+        return new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase );
     }
 
     public IHttpPipelineHandler Join( IHttpPipelineHandler handler )
     {
-      return request =>
-      {
-        request = Rewrite( request );
-        return handler( request );
-      };
+      return new RewritePipelineHandler( this, handler );
     }
+
+    private class RewritePipelineHandler : IHttpPipelineHandler
+    {
+      private readonly IHttpPipelineRewriteRule _rewriter;
+      private readonly IHttpPipelineHandler _handler;
+
+      public RewritePipelineHandler( IHttpPipelineRewriteRule rewriter, IHttpPipelineHandler handler )
+      {
+        _rewriter = rewriter;
+        this._handler = handler;
+      }
+
+      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+      {
+        request = _rewriter.Rewrite( request );
+        return _handler.ProcessRequest( request );
+      }
+    }
+
   }
 }

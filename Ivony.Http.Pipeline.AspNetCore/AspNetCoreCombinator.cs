@@ -117,7 +117,7 @@ namespace Ivony.Http.Pipeline
       {
         var request = await CreateRequest( context );
 
-        var response = await pipeline.PrecessRequest( request );
+        var response = await pipeline.ProcessRequest( request );
 
         await ApplyResponse( context, response );
       };

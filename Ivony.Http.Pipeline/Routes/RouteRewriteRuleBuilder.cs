@@ -36,7 +36,7 @@ namespace Ivony.Http.Pipeline.Routes
 
     public IRouteRulesBuilder Rewrite( RewriteRequestTemplate template )
     {
-      Builder.AddRule( new RouteRewriteRule( templateList, template ) );
+      Builder.AddRule( new RewriteRule( templateList, template ) );
       return Builder;
     }
   }

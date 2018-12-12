@@ -21,7 +21,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>处理结果</returns>
     public static ValueTask<HttpResponseMessage> Handle( this IHttpPipelineDistributer distributer, HttpRequestMessage request )
     {
-      return new DistributerHandler( distributer ).PrecessRequest( request );
+      return new DistributerHandler( distributer ).ProcessRequest( request );
     }
 
 
@@ -39,9 +39,9 @@ namespace Ivony.Http.Pipeline
         _distributer = distributer;
       }
 
-      public ValueTask<HttpResponseMessage> PrecessRequest( HttpRequestMessage request )
+      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
       {
-        return _distributer.Distribute( request ).PrecessRequest( request );
+        return _distributer.Distribute( request ).ProcessRequest( request );
       }
     }
 
@@ -61,7 +61,7 @@ namespace Ivony.Http.Pipeline
         _emitter = emitter;
       }
 
-      public ValueTask<HttpResponseMessage> PrecessRequest( HttpRequestMessage request )
+      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
       {
         return _emitter.EmitRequest( request );
       }

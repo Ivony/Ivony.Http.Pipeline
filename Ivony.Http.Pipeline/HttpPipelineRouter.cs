@@ -57,8 +57,12 @@ namespace Ivony.Http.Pipeline
       }) ).ToArray();
 
 
-      return new HttpPipelineConditionDistributer( _rules, HandleExcept ).AsHandler();
+      return new HttpPipelineConditionDistributer( _rules, NotMatchHandler ).AsHandler();
     }
+
+
+
+    public static IHttpPipelineHandler NotMatchHandler { get; } = new RouteNotMatchHandler();
 
 
     private void CreateRouteData( IHttpPipelineRouteRule rule, HttpRequestMessage request, IEnumerable<KeyValuePair<string, string>> values )
@@ -68,18 +72,21 @@ namespace Ivony.Http.Pipeline
     }
 
 
-    /// <summary>
-    /// handle request when no rule matched.
-    /// </summary>
-    /// <param name="request">HTTP request message</param>
-    /// <returns>response</returns>
-    protected virtual Task<HttpResponseMessage> HandleExcept( HttpRequestMessage request )
-    {
-      return Task.FromResult( new HttpResponseMessage( System.Net.HttpStatusCode.NotFound )
-      {
-        Content = new ByteArrayContent( new byte[0] )
-      } );
 
+    public class RouteNotMatchHandler : IHttpPipelineHandler
+    {
+      /// <summary>
+      /// handle request when no rule matched.
+      /// </summary>
+      /// <param name="request">HTTP request message</param>
+      /// <returns>response</returns>
+      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+      {
+        return new ValueTask<HttpResponseMessage>( new HttpResponseMessage( System.Net.HttpStatusCode.NotFound )
+        {
+          Content = new ByteArrayContent( new byte[0] )
+        } );
+      }
     }
   }
 }

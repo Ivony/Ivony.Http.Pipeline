@@ -13,11 +13,11 @@ namespace Ivony.Http.Pipeline
       _func = func ?? throw new ArgumentNullException( nameof( func ) );
     }
 
-    protected override Task<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+    protected override ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, IHttpPipelineHandler downstream )
     {
 
       request = _func( request );
-      return base.ProcessRequest( request );
+      return downstream.ProcessRequest( request );
 
     }
   }

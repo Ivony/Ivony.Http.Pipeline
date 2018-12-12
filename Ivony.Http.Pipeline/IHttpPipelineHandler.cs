@@ -9,7 +9,6 @@ namespace Ivony.Http.Pipeline
   public interface IHttpPipelineHandler
   {
 
-    ValueTask<HttpResponseMessage> PrecessRequest( HttpRequestMessage request );
-
+    ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request );
   }
 }
