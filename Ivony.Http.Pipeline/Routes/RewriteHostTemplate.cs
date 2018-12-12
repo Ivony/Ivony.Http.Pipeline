@@ -50,10 +50,10 @@ namespace Ivony.Http.Pipeline.Routes
 
 
 
-    public IEnumerable<KeyValuePair<string, string>> GetRouteValues( HostSegments host )
+    public IEnumerable<(string key, string value)> GetRouteValues( HostSegments host )
     {
 
-      var result = new List<KeyValuePair<string, string>>( segments.Length );
+      var result = new List<(string key, string value)>( segments.Length );
 
 
       bool TryMatch( int length )
@@ -68,7 +68,7 @@ namespace Ivony.Http.Pipeline.Routes
           var item = segments[segments.Length - i];
           var hostItem = host[host.Count - i];
           if ( item.Type == SegmentType.Dynamic )
-            result.Add( new KeyValuePair<string, string>( item.Value, hostItem ) );
+            result.Add( (item.Value, hostItem) );
 
           else if ( item.Type == SegmentType.Static && stringComparer.Equals( item.Value, hostItem ) == false )
             return false;
@@ -86,7 +86,7 @@ namespace Ivony.Http.Pipeline.Routes
           return null;
 
 
-        result.Add( new KeyValuePair<string, string>( infinityKey, string.Join( '.', host.Take( host.Count - length ) ) ) );
+        result.Add( (infinityKey, string.Join( '.', host.Take( host.Count - length ) )) );
       }
       else
       {

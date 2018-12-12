@@ -93,7 +93,7 @@ namespace Ivony.Http.Pipeline.Routes
           return null;
 
         foreach ( var pair in values )
-          routeValues.Add( pair.Key, pair.Value );
+          routeValues.Add( pair.key, pair.value );
       }
 
 
