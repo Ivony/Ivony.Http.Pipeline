@@ -3,6 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <RootNamespace>Ivony.Http.Pipeline</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.0.1</Version>
+    <Authors>Ivony</Authors>
+    <Description>HttpPipeline for aspnet core</Description>
+    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Ivony/Ivony.Http.Pipeline</PackageProjectUrl>
+    <Copyright>copyright Ivony</Copyright>
+    <PackageTags>http pipeline forward proxy apigateway gateway rewrite route aspnet aspnetcore dotnetcore</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

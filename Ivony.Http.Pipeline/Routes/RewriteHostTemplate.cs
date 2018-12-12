@@ -31,7 +31,7 @@ namespace Ivony.Http.Pipeline.Routes
       for ( int i = 1; i < segments.Length; i++ )
       {
         if ( segments[i].Type == SegmentType.InfinityDynamic )
-          throw new FormatException( "infinity dynamic segment must in the last of template" );
+          throw new FormatException( "infinity dynamic segment must in the first of template" );
       }
 
       var set = new HashSet<string>( stringComparer );
