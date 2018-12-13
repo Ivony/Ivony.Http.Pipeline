@@ -1,4 +1,6 @@
-﻿namespace Ivony.Http.Pipeline
+﻿using System;
+
+namespace Ivony.Http.Pipeline
 {
 
   /// <summary>
@@ -11,6 +13,9 @@
 
     public HttpPipelineJointer( IHttpPipeline upstream, IHttpPipeline downstream )
     {
+      if ( downstream is IDummyHttpPipeline )
+        throw new InvalidOperationException( "can not join a dummy pipeline as downstream!" );
+      
       _upstream = upstream;
       _downstream = downstream;
     }

@@ -16,7 +16,7 @@ namespace Ivony.Http.Pipeline.Routes
     private readonly StringComparer stringComparer = StringComparer.OrdinalIgnoreCase;
 
 
-    private string infinityKey = null;
+    private readonly string infinityKey = null;
 
     public RewriteHostTemplate( string hostTemplate )
     {

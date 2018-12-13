@@ -19,4 +19,14 @@ namespace Ivony.Http.Pipeline
     IHttpPipelineHandler Join( IHttpPipelineHandler downstream );
 
   }
+
+
+  /// <summary>
+  /// define a dummy pipeline.
+  /// </summary>
+  public interface IDummyHttpPipeline : IHttpPipeline
+  {
+
+  }
+
 }

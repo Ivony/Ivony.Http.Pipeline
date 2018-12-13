@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiGateway", "ApiGateway\Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiGateway.Test", "ApiGateway.Test\ApiGateway.Test.csproj", "{894BA84E-F0A4-4FA1-9064-EF5059474B9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ivony.Http.Pipeline.Tunnel", "Ivony.Http.Pipeline.Tunnel\Ivony.Http.Pipeline.Tunnel.csproj", "{EB1D8533-FD74-4650-9BAE-F4D1FA62D496}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ivony.Http.Pipeline.Tunnel", "Ivony.Http.Pipeline.Tunnel\Ivony.Http.Pipeline.Tunnel.csproj", "{EB1D8533-FD74-4650-9BAE-F4D1FA62D496}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ivony.Http.Pipeline.AspNetCore", "Ivony.Http.Pipeline.AspNetCore\Ivony.Http.Pipeline.AspNetCore.csproj", "{8435E86A-E656-44F7-A605-82A739592CCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ivony.Http.Pipeline.AspNetCore", "Ivony.Http.Pipeline.AspNetCore\Ivony.Http.Pipeline.AspNetCore.csproj", "{8435E86A-E656-44F7-A605-82A739592CCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForwardProxy", "ForwardProxy\ForwardProxy.csproj", "{D4F6A1FE-69E1-4995-936B-E2B5BD40D14F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{8435E86A-E656-44F7-A605-82A739592CCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8435E86A-E656-44F7-A605-82A739592CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8435E86A-E656-44F7-A605-82A739592CCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4F6A1FE-69E1-4995-936B-E2B5BD40D14F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4F6A1FE-69E1-4995-936B-E2B5BD40D14F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4F6A1FE-69E1-4995-936B-E2B5BD40D14F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4F6A1FE-69E1-4995-936B-E2B5BD40D14F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

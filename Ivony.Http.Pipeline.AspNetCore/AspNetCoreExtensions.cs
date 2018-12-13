@@ -3,56 +3,81 @@
 using Ivony.Http.Pipeline;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Microsoft.AspNetCore.Hosting
 {
   public static class AspNetCoreExtensions
   {
 
 
-    public static IServiceCollection AddHttpPipeline( this IServiceCollection services )
+    /// <summary>
+    /// use HTTP pipeline
+    /// </summary>
+    /// <param name="builder">asp.net core application builder</param>
+    /// <returns>HTTP pipeline</returns>
+    public static IHttpPipeline UsePipeline( this IApplicationBuilder builder )
     {
-      services.AddSingleton<IHttpPipelineEmitter, HttpPipelineEmitter>();
-      services.AddSingleton<IHttpPipelineAccessPoint<Func<RequestDelegate, RequestDelegate>>, AspNetCoreCombinator>();
-
-      return services;
+      return UsePipeline( builder, builder.ApplicationServices.GetRequiredService<IHttpPipelineAccessPoint<RequestDelegate>>() );
     }
+
 
 
     /// <summary>
-    /// 使用 HTTP 请求处理管线
+    /// use HTTP pipeline
     /// </summary>
-    /// <param name="application">ASP.NET Core 应用构建器</param>
-    /// <param name="configure">处理管线构建程序</param>
-    public static IHttpPipeline UsePipeline( this IApplicationBuilder application, IHttpPipelineAccessPoint<Func<RequestDelegate, RequestDelegate>> accessPoint )
+    /// <param name="builder">asp.net core application builder</param>
+    /// <param name="accessPoint">HTTP pipeline asp.net core access point</param>
+    /// <returns>HTTP pipeline</returns>
+    public static IHttpPipeline UsePipeline( this IApplicationBuilder builder, IHttpPipelineAccessPoint<RequestDelegate> accessPoint )
     {
-      return new HttpPipeline( application, accessPoint );
-    }
-
-
-    private class HttpPipeline : IHttpPipeline
-    {
-      private readonly IApplicationBuilder _builder;
-      private readonly IHttpPipelineAccessPoint<Func<RequestDelegate, RequestDelegate>> _accessPoint;
-
-      public HttpPipeline( IApplicationBuilder builder, IHttpPipelineAccessPoint<Func<RequestDelegate, RequestDelegate>> accessPoint )
+      return accessPoint.AsPipeline( application =>
       {
-        _builder = builder ?? throw new ArgumentNullException( nameof( builder ) );
-        _accessPoint = accessPoint ?? throw new ArgumentNullException( nameof( accessPoint ) );
-      }
-
-      public IHttpPipelineHandler Join( IHttpPipelineHandler downstream )
-      {
-        _builder.Use( _accessPoint.Combine( downstream ) );
-        var logger = _builder.ApplicationServices.GetService<ILogger<AspNetCoreCombinator>>();
+        var logger = builder.ApplicationServices.GetService<ILogger<AspNetCoreCombinator>>();
         if ( logger != null )
           logger.LogInformation( "http pipeline injected." );
 
-        return null;
+        builder.Run( application );
+      } );
+    }
+
+
+
+    private class PipelineStartupFilter : IStartupFilter
+    {
+      public PipelineStartupFilter()
+      {
+      }
+
+      public Action<IApplicationBuilder> Configure( Action<IApplicationBuilder> next )
+      {
+
+        if ( _handler == null )
+          throw new InvalidOperationException( "must invoke Run method when pipeline is completed." );
+
+
+        return builder =>
+        {
+          builder.Run( _handler );
+          next( builder );
+        };
+      }
+
+      private RequestDelegate _handler;
+
+      internal void SetApplication( RequestDelegate handler )
+      {
+        _handler = handler;
       }
     }
+
+
+
+
+
 
 
     /// <summary>
@@ -78,15 +103,28 @@ namespace Microsoft.Extensions.DependencyInjection
     }
 
 
+
+    public static void Run( this IHttpPipeline pipeline )
+    {
+      //TODO get emitter from depencency injection.
+      pipeline.Emit( new HttpPipelineEmitter() );
+    }
+
+
+
+
+
+
+
     /// <summary>
     /// 使用 HTTP 请求处理管线
     /// </summary>
     /// <param name="application">ASP.NET Core 应用构建器</param>
     /// <param name="configure">处理管线构建程序</param>
-    public static void UsePipeline( this IApplicationBuilder application, Func<IHttpPipeline, IHttpPipelineHandler> configure )
+    public static void Run( this IApplicationBuilder application, Func<IHttpPipeline, IHttpPipelineHandler> configure )
     {
       var pipeline = configure( Ivony.Http.Pipeline.HttpPipeline.Blank );
-      application.UsePipeline( pipeline );
+      application.Run( pipeline );
     }
 
 
@@ -96,10 +134,10 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     /// <param name="application">ASP.NET Core 应用构建器</param>
     /// <param name="configure">处理管线构建程序</param>
-    public static void UsePipeline( this IApplicationBuilder application, Func<IHttpPipeline, IHttpPipeline> configure )
+    public static void Run( this IApplicationBuilder application, Func<IHttpPipeline, IHttpPipeline> configure )
     {
       var pipeline = configure( Ivony.Http.Pipeline.HttpPipeline.Blank );
-      application.UsePipeline( pipeline.Emit( application.ApplicationServices.GetService<IHttpPipelineEmitter>() ) );
+      application.Run( pipeline.Emit( application.ApplicationServices.GetService<IHttpPipelineEmitter>() ) );
     }
 
 
@@ -108,25 +146,13 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     /// <param name="application">ASP.NET Core 应用构建器</param>
     /// <param name="pipeline">HTTP 请求处理管线</param>
-    public static void UsePipeline( this IApplicationBuilder application, IHttpPipelineHandler pipeline )
+    public static void Run( this IApplicationBuilder application, IHttpPipelineHandler pipeline )
     {
-
+      var accessPoint = application.ApplicationServices.GetService<IHttpPipelineAccessPoint<RequestDelegate>>();
+      if ( accessPoint != null )
       {
-        var accessPoint = application.ApplicationServices.GetService<IHttpPipelineAccessPoint<Func<RequestDelegate, RequestDelegate>>>();
-        if ( accessPoint != null )
-        {
-          application.Use( accessPoint.Combine( pipeline ) );
-          return;
-        }
-      }
-
-      {
-        var accessPoint = application.ApplicationServices.GetService<IHttpPipelineAccessPoint<RequestDelegate>>();
-        if ( accessPoint != null )
-        {
-          application.Use( continuation => accessPoint.Combine( pipeline ) );
-          return;
-        }
+        application.Run( accessPoint.Combine( pipeline ) );
+        return;
       }
 
       throw new InvalidOperationException( "asp.net core access point service is not register yet." );

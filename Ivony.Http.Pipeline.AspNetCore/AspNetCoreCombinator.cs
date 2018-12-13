@@ -12,9 +12,9 @@ namespace Ivony.Http.Pipeline
 
 
   /// <summary>
-  /// 辅助在 ASP.NET Core 上创建 HTTP 管线
+  /// implement a combinator to combine HTTP pipeline and asp.net core server
   /// </summary>
-  public class AspNetCoreCombinator : IHttpPipelineAccessPoint<Func<RequestDelegate, RequestDelegate>>
+  public class AspNetCoreCombinator : IHttpPipelineAccessPoint<RequestDelegate>
   {
     internal static readonly string HttpContextAccessKey = "__HttpContext";
 
@@ -79,7 +79,7 @@ namespace Ivony.Http.Pipeline
     }
 
 
-    protected readonly static HashSet<string> ignoreHeaders = new HashSet<string> { "Accept-Encoding", "Connection", "Content-Encoding", "Content-Length", "Keep-Alive", "Transfer-Encoding", "TE", "Accept-Transfer-Encoding", "Trailer", "Upgrade", "Proxy-Authorization", "Proxy-Authenticate" };
+    protected readonly static HashSet<string> ignoreHeaders = new HashSet<string>( StringComparer.OrdinalIgnoreCase ) { "Accept-Encoding", "Connection", "Content-Encoding", "Content-Length", "Keep-Alive", "Transfer-Encoding", "TE", "Accept-Transfer-Encoding", "Trailer", "Upgrade", "Proxy-Authorization", "Proxy-Authenticate" };
 
 
     protected virtual Uri CreateUri( HttpRequest request )
@@ -107,13 +107,12 @@ namespace Ivony.Http.Pipeline
       return request;
     }
 
-    Func<RequestDelegate, RequestDelegate> IHttpPipelineAccessPoint<Func<RequestDelegate, RequestDelegate>>.Combine( IHttpPipelineHandler pipeline )
+    RequestDelegate IHttpPipelineAccessPoint<RequestDelegate>.Combine( IHttpPipelineHandler pipeline )
     {
       if ( pipeline == null )
         throw new ArgumentNullException( nameof( pipeline ) );
 
-
-      return continuation => async context =>
+      return async context =>
       {
         var request = await CreateRequest( context );
 

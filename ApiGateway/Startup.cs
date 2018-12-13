@@ -31,23 +31,9 @@ namespace ApiGateway
 
 
       app
-        .ForwardProxy()
-        .Rewrite( "/{path*}", "//www.163.com/{path}" )
-        .Emit();
-      /*
-              .UseRouter( route => route
-                .Match( "/Logs/{path*}" )
-                .Match( "/Log/{path*}" )
-                .Rewrite( "http://10.168.95.71:5000/{path}" )
-                .Match( "/MQ/{path*}" )
-                .Rewrite( "http://10.168.95.72:5000/{path}" )
-              )
-              .Emit();
-      */
-      app.Run( async ( context ) =>
-       {
-         await context.Response.WriteAsync( "Hello World!" );
-       } );
+        .UsePipeline()
+        .Rewrite( "//{host*}/{path*}", "//10.0.0.1/{host}/{path}" )
+        .Run();
     }
   }
 }
