@@ -23,7 +23,7 @@ namespace Ivony.Http.Pipeline.Test
 
       void m()
       {
-        HttpPipeline.Blank.JoinPipeline( pipeline );
+        HttpPipeline.Blank.Join( pipeline );
       };
 
       ((Action) m).Should().Throw<InvalidOperationException>();

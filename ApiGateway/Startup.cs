@@ -32,8 +32,7 @@ namespace ApiGateway
 
       app
         .UsePipeline()
-        .Rewrite( "//{host*}/{path*}", "//10.0.0.1/{host}/{path}" )
-        .Run();
+        .Rewrite( "//{host*}/{path*}", "//10.0.0.1/{host}/{path}" );
     }
   }
 }

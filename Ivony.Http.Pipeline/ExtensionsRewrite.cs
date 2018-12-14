@@ -18,9 +18,7 @@ namespace Ivony.Http.Pipeline
     /// <param name="template">rewrite template.</param>
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( this IHttpPipeline pipeline, string template )
-    {
-      return Rewrite( pipeline, new RewriteRequestTemplate( template ) );
-    }
+      => pipeline.Join( RewriteRule.Create( template ) );
 
     /// <summary>
     /// insert a rewrite rule to pipeline
@@ -29,10 +27,8 @@ namespace Ivony.Http.Pipeline
     /// <param name="template">rewrite template.</param>
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RewriteRequestTemplate template )
-    {
-      var rewriter = RewriteRule.Create( template );
-      return pipeline.JoinPipeline( rewriter );
-    }
+      => pipeline.Join( RewriteRule.Create( template ) );
+
 
 
 
@@ -44,10 +40,9 @@ namespace Ivony.Http.Pipeline
     /// <param name="downstream">downstream rule, or called rewrite rule</param>
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( this IHttpPipeline pipeline, string upstream, string downstream )
-    {
-      var rewriter = RewriteRule.Create( upstream, downstream );
-      return pipeline.JoinPipeline( rewriter );
-    }
+      => pipeline.Join( RewriteRule.Create( upstream, downstream ) );
+
+
 
     /// <summary>
     /// insert a rewrite rule to pipeline
@@ -57,12 +52,7 @@ namespace Ivony.Http.Pipeline
     /// <param name="downstream">downstream rule, or called rewrite rule</param>
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RewriteRequestTemplate upstream, RewriteRequestTemplate downstream )
-    {
-      var rewriter = RewriteRule.Create( upstream, downstream );
-      return pipeline.JoinPipeline( rewriter );
-    }
-
-
+      => pipeline.Join( RewriteRule.Create( upstream, downstream ) );
 
 
 
@@ -75,11 +65,7 @@ namespace Ivony.Http.Pipeline
     /// <param name="downstream">downstream rule, or called rewrite rule</param>
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( this IHttpPipeline pipeline, params string[] templates )
-    {
-
-      var rewriter = RewriteRule.Create( templates );
-      return pipeline.JoinPipeline( rewriter );
-    }
+      => pipeline.Join( RewriteRule.Create( templates ) );
 
     /// <summary>
     /// insert a rewrite rule to pipeline
@@ -89,33 +75,19 @@ namespace Ivony.Http.Pipeline
     /// <param name="downstream">downstream rule, or called rewrite rule</param>
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( IHttpPipeline pipeline, RewriteRequestTemplate[] upstreams, RewriteRequestTemplate downstream )
-    {
-      var rewriter = new RewriteRule( upstreams, downstream );
-
-      return pipeline.JoinPipeline( rewriter );
-    }
+      => pipeline.Join( RewriteRule.Create( upstreams, downstream ) );
 
 
 
     /// <summary>
-    /// 重写请求的 Host 属性
+    /// rewrite request host
     /// </summary>
-    /// <param name="pipeline">上游管线</param>
-    /// <param name="host">要重写的主机头</param>
-    /// <returns>请求处理管线</returns>
+    /// <param name="pipeline">upstream pipeline</param>
+    /// <param name="host">host string to rewrite</param>
+    /// <returns>pipeline with host rewrite</returns>
     public static IHttpPipeline RewriteHost( this IHttpPipeline pipeline, string host )
-    {
-      return Rewrite( pipeline, "/{path*}", "//" + host + "/{path}" );
-    }
+      => Rewrite( pipeline, "/{path*}", "//" + host + "/{path}" );
 
 
-    private static int? GetDefaultPort( string scheme )
-    {
-      if ( scheme == Uri.UriSchemeHttp )
-        return 80;
-
-      else
-        return null;
-    }
   }
 }

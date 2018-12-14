@@ -104,58 +104,63 @@ namespace Microsoft.AspNetCore.Hosting
 
 
 
-    public static void Run( this IHttpPipeline pipeline )
-    {
-      //TODO get emitter from depencency injection.
-      pipeline.Emit( new HttpPipelineEmitter() );
-    }
-
-
 
 
 
 
 
     /// <summary>
-    /// 使用 HTTP 请求处理管线
+    /// run asp.net core site with pipeline.
     /// </summary>
-    /// <param name="application">ASP.NET Core 应用构建器</param>
-    /// <param name="configure">处理管线构建程序</param>
-    public static void Run( this IApplicationBuilder application, Func<IHttpPipeline, IHttpPipelineHandler> configure )
+    /// <param name="builder">asp.net core application builder</param>
+    /// <param name="configure">HTTP pipeline configure</param>
+    public static void RunPipeline( this IApplicationBuilder builder, Func<IHttpPipeline, IHttpPipelineHandler> configure )
     {
       var pipeline = configure( Ivony.Http.Pipeline.HttpPipeline.Blank );
-      application.Run( pipeline );
+      builder.RunPipeline( pipeline );
     }
 
 
 
     /// <summary>
-    /// 使用 HTTP 请求处理管线
+    /// run asp.net core site with pipeline.
     /// </summary>
-    /// <param name="application">ASP.NET Core 应用构建器</param>
-    /// <param name="configure">处理管线构建程序</param>
-    public static void Run( this IApplicationBuilder application, Func<IHttpPipeline, IHttpPipeline> configure )
+    /// <param name="builder">asp.net core application builder</param>
+    /// <param name="configure">HTTP pipeline configure</param>
+    public static void RunPipeline( this IApplicationBuilder builder, Func<IHttpPipeline, IHttpPipeline> configure )
     {
       var pipeline = configure( Ivony.Http.Pipeline.HttpPipeline.Blank );
-      application.Run( pipeline.Emit( application.ApplicationServices.GetService<IHttpPipelineEmitter>() ) );
+      builder.RunPipeline( pipeline.Emit( builder.ApplicationServices.GetService<IHttpPipelineEmitter>() ) );
     }
 
 
     /// <summary>
-    /// 使用 HTTP 请求处理管线
+    /// run asp.net core site with pipeline.
     /// </summary>
-    /// <param name="application">ASP.NET Core 应用构建器</param>
-    /// <param name="pipeline">HTTP 请求处理管线</param>
-    public static void Run( this IApplicationBuilder application, IHttpPipelineHandler pipeline )
+    /// <param name="builder">asp.net core application builder</param>
+    /// <param name="pipeline">HTTP pipeline</param>
+    public static void RunPipeline( this IApplicationBuilder builder, IHttpPipelineHandler pipeline )
     {
-      var accessPoint = application.ApplicationServices.GetService<IHttpPipelineAccessPoint<RequestDelegate>>();
-      if ( accessPoint != null )
-      {
-        application.Run( accessPoint.Combine( pipeline ) );
-        return;
-      }
+      var accessPoint = builder.ApplicationServices.GetRequiredService<IHttpPipelineAccessPoint<RequestDelegate>>();
+      builder.Run( accessPoint.Combine( pipeline ) );
+    }
 
-      throw new InvalidOperationException( "asp.net core access point service is not register yet." );
+
+    /// <summary>
+    /// run asp.net core site with pipeline.
+    /// </summary>
+    /// <param name="builder">asp.net core application builder</param>
+    /// <param name="configure">HTTP pipeline configure</param>
+    public static void RunPipeline( this IApplicationBuilder builder, Action<AspNetCorePipelineBuilder> configure )
+    {
+      var pipelineBuilder = new AspNetCorePipelineBuilder();
+      configure( pipelineBuilder );
+      if ( pipelineBuilder.Application == null )
+        throw new InvalidOperationException( "HTTP pipeline is not completed yet." );
+
+      else
+        builder.Run( pipelineBuilder.Application );
+
     }
 
   }

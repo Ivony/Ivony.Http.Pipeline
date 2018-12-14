@@ -33,7 +33,7 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with router</returns>
     public static IHttpPipeline UseRouter( this IHttpPipeline pipeline, params IHttpPipelineRouteRule[] rules )
     {
-      return pipeline.JoinPipeline( new HttpPipelineRouter( rules ) );
+      return pipeline.Join( new HttpPipelineRouter( rules ) );
     }
 
     /// <summary>
