@@ -52,3 +52,8 @@ performance test result:
 * **40% less average request time** compared to Ocelot
 * **more than 25% rps** compared to Ocelot
 
+
+[![Nuget](http://img.shields.io/nuget/v/Ivony.Http.Pipeline.svg)](https://www.nuget.org/packages/Ivony.Http.Pipeline/)
+[![Nuget](http://img.shields.io/nuget/dt/Ivony.Http.Pipeline.svg)](https://www.nuget.org/packages/Ivony.Http.Pipeline/)
+	
+
