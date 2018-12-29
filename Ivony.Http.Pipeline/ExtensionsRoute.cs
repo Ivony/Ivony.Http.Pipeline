@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using Ivony.Http.Pipeline;
+using Ivony.Http.Pipeline.Handlers;
 using Ivony.Http.Pipeline.Routes;
 
 namespace Ivony.Http.Pipeline
@@ -33,7 +34,20 @@ namespace Ivony.Http.Pipeline
     /// <returns>pipeline with router</returns>
     public static IHttpPipeline UseRouter( this IHttpPipeline pipeline, params IHttpPipelineRouteRule[] rules )
     {
-      return pipeline.Join( new HttpPipelineRouter( rules ) );
+      return UseRouter( pipeline, new HttpNotFound(), rules );
+    }
+
+
+    /// <summary>
+    /// use a router.
+    /// </summary>
+    /// <param name="pipeline">pipeline to use router</param>
+    /// <param name="otherwise">handler that handle request when no rule matches.</param>
+    /// <param name="rules">route rules</param>
+    /// <returns>pipeline with router</returns>
+    public static IHttpPipeline UseRouter( this IHttpPipeline pipeline, IHttpPipelineHandler otherwise, params IHttpPipelineRouteRule[] rules )
+    {
+      return pipeline.Join( new HttpPipelineRouter( otherwise, rules ) );
     }
 
     /// <summary>
@@ -69,7 +83,7 @@ namespace Ivony.Http.Pipeline
     {
       var builder = new RouteRulesBuilder();
       configure( builder );
-      return UseRouter( pipeline, builder.GetRules() );
+      return UseRouter( pipeline, builder.GetOtherwiseHandler() ?? new HttpNotFound(), builder.GetRules() );
     }
 
 
@@ -78,6 +92,12 @@ namespace Ivony.Http.Pipeline
     public static RouteRewriteRuleBuilder Match( this IRouteRulesBuilder builder, string upstreamTemplate )
     {
       return new RouteRewriteRuleBuilder( builder ).Match( upstreamTemplate );
+    }
+
+    public static IRouteRulesBuilder Rewrite( this IRouteRulesBuilder builder, string upstream, string downstrem )
+    {
+      builder.AddRule( RewriteRule.Create( upstream, downstrem ) );
+      return builder;
     }
 
 

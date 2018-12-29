@@ -19,9 +19,11 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// create a HttpPipelineRouteService instance
     /// </summary>
+    /// <param name="otherwiseHandler">handler that handle request when there is no rule match</param>
     /// <param name="rules">route rules</param>
-    public HttpPipelineRouter( params IHttpPipelineRouteRule[] rules )
+    public HttpPipelineRouter( IHttpPipelineHandler otherwiseHandler, params IHttpPipelineRouteRule[] rules )
     {
+      OtherwiseHandler = otherwiseHandler ?? throw new ArgumentNullException( nameof( otherwiseHandler ) );
       Rules = rules ?? throw new ArgumentNullException( nameof( rules ) );
     }
 
@@ -57,12 +59,12 @@ namespace Ivony.Http.Pipeline
       }) ).ToArray();
 
 
-      return new HttpPipelineConditionDistributer( _rules, NotMatchHandler ).AsHandler();
+      return new HttpPipelineConditionDistributer( _rules, OtherwiseHandler ).AsHandler();
     }
 
 
 
-    public static IHttpPipelineHandler NotMatchHandler { get; } = new RouteNotMatchHandler();
+    public IHttpPipelineHandler OtherwiseHandler { get; }
 
 
     private void CreateRouteData( IHttpPipelineRouteRule rule, HttpRequestMessage request, IEnumerable<KeyValuePair<string, string>> values )
