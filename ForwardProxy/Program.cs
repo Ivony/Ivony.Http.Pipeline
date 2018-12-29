@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Ivony.Http.Pipeline.Routes;
 
 namespace ForwardProxy
 {
@@ -31,8 +32,9 @@ namespace ForwardProxy
       public void Configure( IApplicationBuilder app )
       {
         app
-          .UseForwardedHeaders()
           .ForwardProxy()
+          .UseRouter( configure => configure
+            .Rewrite( "//163.com/{path*}", "//jumony.net/{path}" ) )
           .Emit();
       }
 
