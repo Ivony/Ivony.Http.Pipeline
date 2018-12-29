@@ -55,6 +55,25 @@ namespace Ivony.Http.Pipeline.Test
 
     }
 
+    [TestMethod]
+    public void Host4()
+    {
+      var request = CreateRequest();
+
+      var rule = RewriteRule.Create( "//www.163.com", "//www.jumony.net" );
+      request = rule.Rewrite( request );
+
+      Assert.AreEqual( request.RequestUri.AbsoluteUri, "http://www.jumony.net/News/Test/1" );
+
+    }
+
+    [TestMethod]
+    public void Path()
+    {
+      var result = PathSegments.Create( "/favicon.ico" );
+    }
+
+
 
 
     [TestMethod]
