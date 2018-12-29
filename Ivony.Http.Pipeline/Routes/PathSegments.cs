@@ -12,7 +12,7 @@ namespace Ivony.Http.Pipeline.Routes
   {
 
 
-    private static Regex regex = new Regex( @"^(\/+(?<segment>[\w]+))*(\/*)$" );
+    private static Regex regex = new Regex( @"^(\/+(?<segment>[^/?]+))*(\/*)$" );
     private readonly string[] _segments;
 
     public PathSegments( string[] segments )
@@ -34,7 +34,7 @@ namespace Ivony.Http.Pipeline.Routes
 
       var match = regex.Match( absoluatePath );
       if ( match.Success == false )
-        throw new FormatException();
+        throw new ArgumentException( $"invalid format of path \"{absoluatePath}\"", nameof( absoluatePath ) );
 
 
       return new PathSegments( match.Groups["segment"].Captures.Cast<Capture>().Select( capture => capture.Value ).ToArray() );
