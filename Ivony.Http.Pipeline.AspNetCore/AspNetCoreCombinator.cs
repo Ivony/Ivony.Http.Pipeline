@@ -61,6 +61,7 @@ namespace Ivony.Http.Pipeline
       request.Method = new HttpMethod( context.Request.Method );
       request.RequestUri = CreateUri( context.Request );
 
+      request.Content = new StreamContent( context.Request.Body );
 
       var ignores = request.Headers.Connection;
 
@@ -72,7 +73,11 @@ namespace Ivony.Http.Pipeline
         if ( ignores.Contains( item.Key ) )
           continue;
 
-        request.Headers.Add( item.Key, item.Value.AsEnumerable() );
+        if ( item.Key.IsContentHeader() )
+          request.Content.Headers.Add( item.Key, item.Value.AsEnumerable() );
+
+        else
+          request.Headers.Add( item.Key, item.Value.AsEnumerable() );
       }
 
       return Task.FromResult( request );

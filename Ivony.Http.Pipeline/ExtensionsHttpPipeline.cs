@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -108,6 +109,30 @@ namespace Ivony.Http.Pipeline
 
 
     }
+
+
+
+    private static readonly HashSet<string> contentHeaders = new HashSet<string>( StringComparer.OrdinalIgnoreCase )
+    {
+      "Allow",
+      "Content-Disposition",
+      "Content-Encoding",
+      "Content-Language",
+      "Content-Length",
+      "Content-Location",
+      "Content-MD5",
+      "Content-Range",
+      "Content-Type",
+      "Expires",
+      "Last-Modified"
+     };
+
+
+    public static bool IsContentHeader( this string header )
+    {
+      return contentHeaders.Contains( header );
+    }
+
 
 
 
