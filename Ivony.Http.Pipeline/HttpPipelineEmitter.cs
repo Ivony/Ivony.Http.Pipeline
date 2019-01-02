@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,23 +14,19 @@ namespace Ivony.Http.Pipeline
   public class HttpPipelineEmitter : IHttpPipelineEmitter
   {
 
-    public HttpPipelineEmitter() : this( new HttpClientHandler { AllowAutoRedirect = false, AutomaticDecompression = System.Net.DecompressionMethods.None, UseCookies = false } )
+    public HttpPipelineEmitter( HttpClient client, bool enableRequestChunked = false )
     {
+      HttpClient = client ?? throw new ArgumentNullException( nameof( client ) );
+      EnableRequestChuncked = enableRequestChunked;
     }
 
-
-    public HttpPipelineEmitter( HttpMessageHandler handler ) : this( new HttpClient( handler ) )
-    {
-    }
+    public HttpClient HttpClient { get; }
+    public bool EnableRequestChuncked { get; }
 
 
 
-    public HttpPipelineEmitter( HttpClient client )
-    {
-      _client = client;
-    }
 
-    HttpClient _client;
+
 
     /// <summary>
     /// 实现 ProcessRequest 方法，发送 HTTP 请求并将响应返回
@@ -40,7 +37,19 @@ namespace Ivony.Http.Pipeline
     {
       request.Headers.Host = request.RequestUri.Host;
 
-      var response = await _client.SendAsync( request );
+      if ( EnableRequestChuncked == false && request.Content is StreamContent )
+      {
+        var data = await request.Content.ReadAsByteArrayAsync();
+        var content = new ByteArrayContent( data );
+
+        foreach ( var header in request.Content.Headers )
+          content.Headers.Add( header.Key, header.Value.AsEnumerable() );
+
+        request.Content = content;
+        request.Headers.TransferEncodingChunked = false;
+      }
+
+      var response = await HttpClient.SendAsync( request );
 
       response.Headers.TransferEncodingChunked = null;
       response.Headers.ConnectionClose = null;

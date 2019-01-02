@@ -239,9 +239,21 @@ namespace Ivony.Http.Pipeline
     /// </summary>
     /// <param name="pipeline">upstream pipeline</param>
     /// <returns>http pipeline handler</returns>
-    public static IHttpPipelineHandler Emit( this IHttpPipeline pipeline )
+    public static IHttpPipelineHandler Emit( this IHttpPipeline pipeline, bool enableRequestChuncked = false )
     {
-      return pipeline.Join( new HttpPipelineEmitter().AsHandler() );
+      var handler = new SocketsHttpHandler { AllowAutoRedirect = false, AutomaticDecompression = System.Net.DecompressionMethods.None, UseCookies = false };
+      return Emit( pipeline, handler, enableRequestChuncked );
+    }
+
+    /// <summary>
+    /// join pipeline with a request emitter, create a http pipeline handler.
+    /// </summary>
+    /// <param name="pipeline">upstream pipeline</param>
+    /// <param name="handler">http message handler</param>
+    /// <returns>http pipeline handler</returns>
+    public static IHttpPipelineHandler Emit( this IHttpPipeline pipeline, HttpMessageHandler handler, bool enableRequestChuncked = false )
+    {
+      return pipeline.Join( new HttpPipelineEmitter( new HttpClient( handler ), enableRequestChuncked ).AsHandler() );
     }
 
 
@@ -257,17 +269,6 @@ namespace Ivony.Http.Pipeline
       return pipeline.Join( emitter.AsHandler() );
     }
 
-
-    /// <summary>
-    /// join pipeline with a request emitter, create a http pipeline handler.
-    /// </summary>
-    /// <param name="pipeline">upstream pipeline</param>
-    /// <param name="handler">http message handler</param>
-    /// <returns>http pipeline handler</returns>
-    public static IHttpPipelineHandler Emit( this IHttpPipeline pipeline, HttpMessageHandler handler )
-    {
-      return pipeline.Join( new HttpPipelineEmitter( handler ).AsHandler() );
-    }
 
 
 
