@@ -14,14 +14,12 @@ namespace Ivony.Http.Pipeline
   public class HttpPipelineEmitter : IHttpPipelineEmitter
   {
 
-    public HttpPipelineEmitter( HttpClient client, bool enableRequestChunked = false )
+    public HttpPipelineEmitter( HttpPipelineEmitterOptions options )
     {
-      HttpClient = client ?? throw new ArgumentNullException( nameof( client ) );
-      EnableRequestChuncked = enableRequestChunked;
+      Options = options ?? new HttpPipelineEmitterOptions();
     }
 
-    public HttpClient HttpClient { get; }
-    public bool EnableRequestChuncked { get; }
+    protected HttpPipelineEmitterOptions Options { get; }
 
 
 
@@ -37,19 +35,23 @@ namespace Ivony.Http.Pipeline
     {
       request.Headers.Host = request.RequestUri.Host;
 
-      if ( EnableRequestChuncked == false && request.Content is StreamContent )
+      if ( Options.DisableRequestChunked )
       {
-        var data = await request.Content.ReadAsByteArrayAsync();
-        var content = new ByteArrayContent( data );
+        if ( request.Content is StreamContent )
+        {
+          var data = await request.Content.ReadAsByteArrayAsync();
+          var content = new ByteArrayContent( data );
 
-        foreach ( var header in request.Content.Headers )
-          content.Headers.Add( header.Key, header.Value.AsEnumerable() );
+          foreach ( var header in request.Content.Headers )
+            content.Headers.Add( header.Key, header.Value.AsEnumerable() );
 
-        request.Content = content;
+          request.Content = content;
+        }
+
         request.Headers.TransferEncodingChunked = false;
       }
 
-      var response = await HttpClient.SendAsync( request );
+      var response = await Options.HttpClient.SendAsync( request );
 
       response.Headers.TransferEncodingChunked = null;
       response.Headers.ConnectionClose = null;
