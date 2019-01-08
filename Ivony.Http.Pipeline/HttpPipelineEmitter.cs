@@ -33,31 +33,45 @@ namespace Ivony.Http.Pipeline
     /// <returns>响应信息</returns>
     public virtual async ValueTask<HttpResponseMessage> EmitRequest( HttpRequestMessage request )
     {
-      request.Headers.Host = request.RequestUri.Host;
+      if ( Options.ConformHost )
+        request.Headers.Host = request.RequestUri.Host;
+
 
       if ( Options.DisableRequestChunked )
       {
-        if ( request.Content is StreamContent )
-        {
-          var data = await request.Content.ReadAsByteArrayAsync();
-          var content = new ByteArrayContent( data );
-
-          foreach ( var header in request.Content.Headers )
-            content.Headers.Add( header.Key, header.Value.AsEnumerable() );
-
-          request.Content = content;
-        }
-
+        request.Content = await TryBufferContent( request.Content );
         request.Headers.TransferEncodingChunked = false;
       }
 
       var response = await Options.HttpClient.SendAsync( request );
 
-      response.Headers.TransferEncodingChunked = null;
+      if ( Options.DisableResponseChunked )
+      {
+        response.Content = await TryBufferContent( request.Content );
+        response.Headers.TransferEncodingChunked = false;
+      }
+      else
+        response.Headers.TransferEncodingChunked = null;
+
+
       response.Headers.ConnectionClose = null;
 
       return response;
     }
 
+    private async ValueTask<HttpContent> TryBufferContent( HttpContent content )
+    {
+      if ( content is StreamContent == false )
+        return content;
+
+
+      var data = await content.ReadAsByteArrayAsync();
+      var newContent = new ByteArrayContent( data );
+
+      foreach ( var header in content.Headers )
+        newContent.Headers.Add( header.Key, header.Value.AsEnumerable() );
+
+      return newContent;
+    }
   }
 }

@@ -109,7 +109,7 @@ namespace Ivony.Http.Pipeline.Routes
     public IReadOnlyDictionary<string, string> Match( RouteRequestData requestData )
     {
 
-      if ( Upstreams.Any() == false )
+      if ( Upstreams.Any() == false )                //if has no upstream templates, it's match any request.
         return new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase );
 
       foreach ( var item in Upstreams )

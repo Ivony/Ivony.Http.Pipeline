@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Sources;
+
 using Ivony.Http.Pipeline.Routes;
 
 namespace Ivony.Http.Pipeline.Handlers
@@ -12,33 +9,26 @@ namespace Ivony.Http.Pipeline.Handlers
   /// <summary>
   /// handle request and response HTTP 301 Moved Permanently
   /// </summary>
-  public class HttpMovedPermanently : IHttpPipelineHandler
+  public class HttpMovedPermanently : HttpRedirectHandlerBase
   {
 
 
-    public HttpMovedPermanently( RewriteRule rule )
-    {
-      Rule = rule;
-    }
+    /// <summary>
+    /// create HttpMovedPermanently instance
+    /// </summary>
+    /// <param name="rule">rewrite rule for redirect</param>
+    public HttpMovedPermanently( RewriteRule rule ) : base( rule ) { }
 
-    public RewriteRule Rule { get; }
+
 
     /// <summary>
     /// handle request and response HTTP 301 Moved Permanently
     /// </summary>
     /// <param name="request">HTTP request message</param>
     /// <returns>response</returns>
-    public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+    public override ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
     {
-      return new ValueTask<HttpResponseMessage>( CreateResponse( Rule.Rewrite( request ).RequestUri ) );
-    }
-
-    protected HttpResponseMessage CreateResponse( Uri redirectUrl )
-    {
-      var response = new HttpResponseMessage( HttpStatusCode.MovedPermanently );
-      response.Headers.Location = redirectUrl;
-
-      return response;
+      return Result( Redirect( request, HttpStatusCode.MovedPermanently ) );
     }
   }
 }

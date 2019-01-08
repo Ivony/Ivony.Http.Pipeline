@@ -17,7 +17,11 @@ namespace Ivony.Http.Pipeline
 
     private volatile int counter;
 
-    public IHttpPipelineHandler[] Pipelines { get; }
+
+    /// <summary>
+    /// downstream pipelines to be distributed 
+    /// </summary>
+    public IHttpPipelineHandler[] Downstreams { get; }
 
     /// <summary>
     /// choose a downstream pipeline to distribute.
@@ -27,8 +31,8 @@ namespace Ivony.Http.Pipeline
     public virtual IHttpPipelineHandler Distribute( HttpRequestMessage request )
     {
       Interlocked.Increment( ref counter );
-      var index = counter = counter % Pipelines.Length;
-      return Pipelines[index];
+      var index = counter = counter % Downstreams.Length;
+      return Downstreams[index];
     }
 
 
@@ -36,10 +40,10 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// create HttpPipelineDispatcher instance
     /// </summary>
-    /// <param name="pipelines">下游管线</param>
-    public HttpPipelineBalanceDistributer( params IHttpPipelineHandler[] pipelines )
+    /// <param name="downstreams">downstream pipelines to be distribute</param>
+    public HttpPipelineBalanceDistributer( params IHttpPipelineHandler[] downstreams )
     {
-      Pipelines = pipelines ?? throw new ArgumentNullException( nameof( pipelines ) );
+      Downstreams = downstreams ?? throw new ArgumentNullException( nameof( downstreams ) );
     }
 
   }

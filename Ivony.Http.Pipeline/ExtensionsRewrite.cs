@@ -88,6 +88,5 @@ namespace Ivony.Http.Pipeline
     public static IHttpPipeline RewriteHost( this IHttpPipeline pipeline, string host )
       => Rewrite( pipeline, "/{path*}", "//" + host + "/{path}" );
 
-
   }
 }
