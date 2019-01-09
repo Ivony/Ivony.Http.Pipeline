@@ -47,7 +47,7 @@ namespace Ivony.Http.Pipeline
 
       if ( Options.DisableResponseChunked )
       {
-        response.Content = await TryBufferContent( request.Content );
+        response.Content = await TryBufferContent( response.Content );
         response.Headers.TransferEncodingChunked = false;
       }
       else
