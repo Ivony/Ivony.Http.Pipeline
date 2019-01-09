@@ -21,7 +21,7 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// downstream pipelines to be distributed 
     /// </summary>
-    public IHttpPipelineHandler[] Downstreams { get; }
+    public IReadOnlyList<IHttpPipelineHandler> Downstreams { get; }
 
     /// <summary>
     /// choose a downstream pipeline to distribute.
@@ -31,7 +31,7 @@ namespace Ivony.Http.Pipeline
     public virtual IHttpPipelineHandler Distribute( HttpRequestMessage request )
     {
       Interlocked.Increment( ref counter );
-      var index = counter = counter % Downstreams.Length;
+      var index = counter = counter % Downstreams.Count;
       return Downstreams[index];
     }
 
@@ -41,7 +41,16 @@ namespace Ivony.Http.Pipeline
     /// create HttpPipelineDispatcher instance
     /// </summary>
     /// <param name="downstreams">downstream pipelines to be distribute</param>
-    public HttpPipelineBalanceDistributer( params IHttpPipelineHandler[] downstreams )
+    public HttpPipelineBalanceDistributer( params IHttpPipelineHandler[] downstreams ) : this( (IReadOnlyList<IHttpPipelineHandler>) downstreams )
+    {
+
+    }
+
+    /// <summary>
+    /// create HttpPipelineDispatcher instance
+    /// </summary>
+    /// <param name="downstreams">downstream pipelines to be distribute</param>
+    public HttpPipelineBalanceDistributer( IReadOnlyList<IHttpPipelineHandler> downstreams )
     {
       Downstreams = downstreams ?? throw new ArgumentNullException( nameof( downstreams ) );
     }

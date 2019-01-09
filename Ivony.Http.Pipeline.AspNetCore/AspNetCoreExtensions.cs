@@ -91,7 +91,7 @@ namespace Microsoft.AspNetCore.Hosting
     }
 
     /// <summary>
-    /// insert a forward proxy to pipeline
+    /// forward request to downstream pipeline and add forward proxy headers
     /// </summary>
     /// <param name="pipeline">upstream pipeline</param>
     /// <param name="transmit">transmit headers behavior</param>

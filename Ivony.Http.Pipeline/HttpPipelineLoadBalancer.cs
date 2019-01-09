@@ -10,7 +10,7 @@ namespace Ivony.Http.Pipeline
 {
 
   /// <summary>
-  /// load balancer
+  /// http load balancer implements
   /// </summary>
   public class HttpPipelineLoadBalancer : IHttpPipeline
   {
@@ -23,7 +23,11 @@ namespace Ivony.Http.Pipeline
 
 
 
-
+    /// <summary>
+    /// ijoin a downstream pipeline
+    /// </summary>
+    /// <param name="downstream">downstream pipeline</param>
+    /// <returns>http pipeline handler</returns>
     public IHttpPipelineHandler Join( IHttpPipelineHandler downstream )
     {
       var distributer = new HttpPipelineBalanceDistributer( _pipelines.Select( item => item.Join( downstream ) ).ToArray() );

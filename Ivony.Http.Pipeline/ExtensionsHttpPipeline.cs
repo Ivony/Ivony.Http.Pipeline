@@ -15,18 +15,6 @@ namespace Ivony.Http.Pipeline
   {
 
 
-    /// <summary>
-    /// 让管线分发器处理指定的请求
-    /// </summary>
-    /// <param name="distributer">管线分发器</param>
-    /// <param name="request">要处理的请求</param>
-    /// <returns>处理结果</returns>
-    public static ValueTask<HttpResponseMessage> Handle( this IHttpPipelineDistributer distributer, HttpRequestMessage request )
-    {
-      return new DistributerHandler( distributer ).ProcessRequest( request );
-    }
-
-
 
     /// <summary>
     /// returns the request distributer as a pipeline handler.
