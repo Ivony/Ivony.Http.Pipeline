@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Ivony.Http.Pipeline.Routes;
+using Ivony.Http.Pipeline.Handlers;
 
 namespace ForwardProxy
 {
@@ -32,9 +33,14 @@ namespace ForwardProxy
       public void Configure( IApplicationBuilder app )
       {
         app
-          .ForwardProxy()
-          .UseRouter( configure => configure
-            .Rewrite( "//163.com/{path*}", "//jumony.net/{path}" ) )
+          .Forward()
+          .UseRouter( routes => routes
+            .Rewrite( "//nl.miworldtech.com/{path*}", "http://omsapi.miworldtech.com/{path}" )
+            .Rewrite( "//nl.label.miworldtech.com/{path*}", "http://omsapilabel.miworldtech.com/{path}" )
+            .Rewrite( "//nl.yunexpress.com/order/{path*}", "http://omsapi.miworldtech.com/{path}" )
+            .Rewrite( "//nl.yunexpress.com/label/{path*}", "http://omsapilabel.miworldtech.com/{path}" )
+            .Otherwise( new HttpNotFound() )
+          )
           .Emit();
       }
 

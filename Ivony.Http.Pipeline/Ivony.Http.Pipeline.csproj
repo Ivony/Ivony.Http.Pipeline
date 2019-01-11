@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Version>0.0.3</Version>
+    <Version>0.0.4</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/Ivony/Ivony.Http.Pipeline</PackageProjectUrl>
@@ -13,6 +13,8 @@
 It makes it easy for us to develop a variety of HTTP Network Service components based on aspnet core. For example, API gateways, proxies, reverse proxies, response caching, load balancing, and more.</Description>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Ivony/Ivony.Http.Pipeline.git</RepositoryUrl>
+    <PackageIconUrl>https://github.com/Ivony/Ivony.Http.Pipeline/raw/master/icon.png</PackageIconUrl>
+    <PackageReleaseNotes />
   </PropertyGroup>
 
 </Project>
