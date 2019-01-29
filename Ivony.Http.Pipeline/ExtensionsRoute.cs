@@ -8,6 +8,10 @@ using Ivony.Http.Pipeline.Routes;
 
 namespace Ivony.Http.Pipeline
 {
+
+  /// <summary>
+  /// privide extension methods of route
+  /// </summary>
   public static class ExtensionsRoute
   {
 
@@ -77,7 +81,7 @@ namespace Ivony.Http.Pipeline
     /// use a router.
     /// </summary>
     /// <param name="pipeline">pipeline to use router</param>
-    /// <param name="rules">route rules</param>
+    /// <param name="configure">method to configure route rules</param>
     /// <returns>pipeline with router</returns>
     public static IHttpPipeline UseRouter( this IHttpPipeline pipeline, Action<IRouteRulesBuilder> configure )
     {
@@ -89,11 +93,25 @@ namespace Ivony.Http.Pipeline
 
 
 
-    public static RouteRewriteRuleBuilder Match( this IRouteRulesBuilder builder, string upstreamTemplate )
+    /// <summary>
+    /// match one or more route rule
+    /// </summary>
+    /// <param name="builder">route rule builder</param>
+    /// <param name="upstream">upstream template to match</param>
+    /// <returns>a RouteRewriteRuleBuilder instance, use it to add more match rules, or rewrite them.</returns>
+    public static RouteRewriteRuleBuilder Match( this IRouteRulesBuilder builder, string upstream )
     {
-      return new RouteRewriteRuleBuilder( builder ).Match( upstreamTemplate );
+      return new RouteRewriteRuleBuilder( builder ).Match( upstream );
     }
 
+
+    /// <summary>
+    /// rewrite matched request
+    /// </summary>
+    /// <param name="builder">route rule builder</param>
+    /// <param name="upstream">upstream template to match</param>
+    /// <param name="downstrem">downstream template to rewrite</param>
+    /// <returns>a IRouteRulesBuilder instance, use it to add more match or rewrite rules.</returns>
     public static IRouteRulesBuilder Rewrite( this IRouteRulesBuilder builder, string upstream, string downstrem )
     {
       builder.AddRule( RewriteRule.Create( upstream, downstrem ) );

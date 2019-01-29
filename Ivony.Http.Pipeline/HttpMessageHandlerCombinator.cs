@@ -14,6 +14,12 @@ namespace Ivony.Http.Pipeline
   /// </summary>
   public class HttpMessageHandlerCombinator : IHttpPipelineAccessPoint<HttpMessageHandler>
   {
+
+    /// <summary>
+    /// create a HttpMessageHandler instance to access HTTP pipeline.
+    /// </summary>
+    /// <param name="pipeline"></param>
+    /// <returns></returns>
     public HttpMessageHandler Combine( IHttpPipelineHandler pipeline )
     {
       return new HttpHandler( pipeline );

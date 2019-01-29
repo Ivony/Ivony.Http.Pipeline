@@ -45,6 +45,7 @@ namespace Ivony.Http.Pipeline
     /// 派生类重写此方法处理请求
     /// </summary>
     /// <param name="request">请求信息</param>
+    /// <param name="downstream">downstream pipeline request handler</param>
     /// <returns>响应信息</returns>
     protected virtual ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, IHttpPipelineHandler downstream )
     {
@@ -92,7 +93,7 @@ namespace Ivony.Http.Pipeline
 
     private class PipelineWrapper : IHttpPipeline
     {
-      private Func<IHttpPipelineHandler, IHttpPipelineHandler> _pipeline;
+      private readonly Func<IHttpPipelineHandler, IHttpPipelineHandler> _pipeline;
 
       public PipelineWrapper( Func<IHttpPipelineHandler, IHttpPipelineHandler> pipeline )
       {

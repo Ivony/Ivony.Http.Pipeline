@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline.Handlers
 {
+  /// <summary>
+  /// handle request and response HTTP 401 Unauthorized.
+  /// </summary>
   public class HttpUnauthorized : HttpSpecifiedHandlerBase
   {
     public override ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )

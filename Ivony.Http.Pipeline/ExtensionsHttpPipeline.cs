@@ -117,6 +117,11 @@ namespace Ivony.Http.Pipeline
      };
 
 
+    /// <summary>
+    /// Check if an HTTP header is a content header.
+    /// </summary>
+    /// <param name="header">header name to check</param>
+    /// <returns>is a content header</returns>
     public static bool IsContentHeader( this string header )
     {
       return contentHeaders.Contains( header );
@@ -168,7 +173,7 @@ namespace Ivony.Http.Pipeline
     /// use load balancer
     /// </summary>
     /// <param name="pipeline">upstream pipeline</param>
-    /// <param name="pipelines">downstream pipelines</param>
+    /// <param name="pipelinesFactories">downstream pipeline factories</param>
     /// <returns>HTTP pipeline</returns>
     public static IHttpPipeline UseLoadBalancer( this IHttpPipeline pipeline, params Func<IHttpPipeline, IHttpPipeline>[] pipelinesFactories )
     {

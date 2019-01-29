@@ -9,7 +9,7 @@ namespace Ivony.Http.Pipeline.Handlers
 {
 
   /// <summary>
-  /// a base type for specified http handler
+  /// a base type for specified HTTP handler
   /// </summary>
   public abstract class HttpSpecifiedHandlerBase : IHttpPipelineHandler
   {
@@ -41,8 +41,10 @@ namespace Ivony.Http.Pipeline.Handlers
     /// <returns></returns>
     protected HttpResponseMessage Response( HttpStatusCode statusCode, string content )
     {
-      var response = new HttpResponseMessage( statusCode );
-      response.Content = new StringContent( content, UTF8Encoding );
+      var response = new HttpResponseMessage( statusCode )
+      {
+        Content = new StringContent( content, UTF8Encoding )
+      };
 
       return response;
     }

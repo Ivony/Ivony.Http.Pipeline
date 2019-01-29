@@ -7,6 +7,10 @@ using Ivony.Http.Pipeline.Routes;
 
 namespace Ivony.Http.Pipeline
 {
+
+  /// <summary>
+  /// provide rewrite extension methods
+  /// </summary>
   public static class ExtensionsRewrite
   {
 
@@ -47,7 +51,7 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// insert a rewrite rule to pipeline
     /// </summary>
-    /// <param name="pipeline">upstream pipeline</param>
+    /// <param name="pipeline">HTTP pipeline</param>
     /// <param name="upstream">upstream rule, or called route rule.</param>
     /// <param name="downstream">downstream rule, or called rewrite rule</param>
     /// <returns>pipeline with rewrite rule</returns>
@@ -60,9 +64,8 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// insert a rewrite rule to pipeline
     /// </summary>
-    /// <param name="pipeline">upstream pipeline</param>
-    /// <param name="upstreams">upstream rule, or called route rule.</param>
-    /// <param name="downstream">downstream rule, or called rewrite rule</param>
+    /// <param name="pipeline">HTTP pipeline</param>
+    /// <param name="templates">rewrite templates.</param>
     /// <returns>pipeline with rewrite rule</returns>
     public static IHttpPipeline Rewrite( this IHttpPipeline pipeline, params string[] templates )
       => pipeline.Join( RewriteRule.Create( templates ) );
@@ -70,7 +73,7 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// insert a rewrite rule to pipeline
     /// </summary>
-    /// <param name="pipeline">upstream pipeline</param>
+    /// <param name="pipeline">HTTP pipeline</param>
     /// <param name="upstreams">upstream rule, or called route rule.</param>
     /// <param name="downstream">downstream rule, or called rewrite rule</param>
     /// <returns>pipeline with rewrite rule</returns>
@@ -82,7 +85,7 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// rewrite request host
     /// </summary>
-    /// <param name="pipeline">upstream pipeline</param>
+    /// <param name="pipeline">HTTP pipeline</param>
     /// <param name="host">host string to rewrite</param>
     /// <returns>pipeline with host rewrite</returns>
     public static IHttpPipeline RewriteHost( this IHttpPipeline pipeline, string host )

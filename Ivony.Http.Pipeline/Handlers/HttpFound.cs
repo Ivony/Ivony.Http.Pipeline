@@ -6,6 +6,9 @@ using Ivony.Http.Pipeline.Routes;
 
 namespace Ivony.Http.Pipeline.Handlers
 {
+  /// <summary>
+  /// handle request and response HTTP 302 Found.
+  /// </summary>
   public class HttpFound : HttpRedirectHandlerBase
   {
 

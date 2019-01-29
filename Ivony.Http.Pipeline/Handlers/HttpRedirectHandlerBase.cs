@@ -7,6 +7,9 @@ using Ivony.Http.Pipeline.Routes;
 
 namespace Ivony.Http.Pipeline.Handlers
 {
+  /// <summary>
+  /// a base type for HTTP Redirect response handler.
+  /// </summary>
   public abstract class HttpRedirectHandlerBase : HttpSpecifiedHandlerBase
   {
 

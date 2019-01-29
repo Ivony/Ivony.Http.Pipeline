@@ -64,6 +64,9 @@ namespace Ivony.Http.Pipeline
 
 
 
+    /// <summary>
+    /// a handler that handle the request while no rule matched.
+    /// </summary>
     public IHttpPipelineHandler OtherwiseHandler { get; }
 
 
@@ -75,20 +78,5 @@ namespace Ivony.Http.Pipeline
 
 
 
-    public class RouteNotMatchHandler : IHttpPipelineHandler
-    {
-      /// <summary>
-      /// handle request when no rule matched.
-      /// </summary>
-      /// <param name="request">HTTP request message</param>
-      /// <returns>response</returns>
-      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
-      {
-        return new ValueTask<HttpResponseMessage>( new HttpResponseMessage( System.Net.HttpStatusCode.NotFound )
-        {
-          Content = new ByteArrayContent( new byte[0] )
-        } );
-      }
-    }
   }
 }

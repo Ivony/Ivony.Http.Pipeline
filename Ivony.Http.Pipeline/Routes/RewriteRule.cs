@@ -27,8 +27,8 @@ namespace Ivony.Http.Pipeline.Routes
     /// <summary>
     /// create RouteRewriteRule instance
     /// </summary>
-    /// <param name="upstreamTemplates">upstream templates</param>
-    /// <param name="downstreamTemplate">downstream template</param>
+    /// <param name="upstreamTemplates">matching template to match upstreams</param>
+    /// <param name="downstreamTemplate">rewriting template to rewrite downstream</param>
     public RewriteRule( IReadOnlyList<RewriteRequestTemplate> upstreamTemplates, RewriteRequestTemplate downstreamTemplate )
     {
       Upstreams = upstreamTemplates.ToArray();
@@ -37,11 +37,22 @@ namespace Ivony.Http.Pipeline.Routes
 
 
 
+    /// <summary>
+    /// create a route rewrite rule
+    /// </summary>
+    /// <param name="template">rewriting template</param>
+    /// <returns>RouteRewriteRule instance</returns>
     public static RewriteRule Create( string template )
     {
       return Create( new RewriteRequestTemplate( template ) );
     }
 
+
+    /// <summary>
+    /// create a route rewrite rule
+    /// </summary>
+    /// <param name="template">rewriting template</param>
+    /// <returns>RouteRewriteRule instance</returns>
     private static RewriteRule Create( RewriteRequestTemplate template )
     {
       return new RewriteRule( new RewriteRequestTemplate[0], template );
@@ -49,11 +60,24 @@ namespace Ivony.Http.Pipeline.Routes
 
 
 
+    /// <summary>
+    /// create a route rewrite rule
+    /// </summary>
+    /// <param name="upstream">matching template to match upstream</param>
+    /// <param name="downstream">rewriting template to rewrite downstream</param>
+    /// <returns>RouteRewriteRule instance</returns>
     public static RewriteRule Create( string upstream, string downstream )
     {
       return Create( new RewriteRequestTemplate( upstream ), new RewriteRequestTemplate( downstream ) );
     }
 
+
+    /// <summary>
+    /// create a route rewrite rule
+    /// </summary>
+    /// <param name="upstream">matching template to match upstream</param>
+    /// <param name="downstream">rewriting template to rewrite downstream</param>
+    /// <returns>RouteRewriteRule instance</returns>
     public static RewriteRule Create( RewriteRequestTemplate upstream, RewriteRequestTemplate downstream )
     {
       return new RewriteRule( new[] { upstream }, downstream );
@@ -61,11 +85,23 @@ namespace Ivony.Http.Pipeline.Routes
 
 
 
+    /// <summary>
+    /// create a route rewrite rule
+    /// </summary>
+    /// <param name="upstreams">matching templates to match upstream</param>
+    /// <param name="downstream">rewriting template to rewrite downstream</param>
+    /// <returns>RouteRewriteRule instance</returns>
     public static RewriteRule Create( string[] upstreams, string downstream )
     {
       return Create( upstreams.Select( item => new RewriteRequestTemplate( item ) ).ToArray(), new RewriteRequestTemplate( downstream ) );
     }
 
+    /// <summary>
+    /// create a route rewrite rule
+    /// </summary>
+    /// <param name="upstreams">matching templates to match upstream</param>
+    /// <param name="downstream">rewriting template to rewrite downstream</param>
+    /// <returns>RouteRewriteRule instance</returns>
     public static RewriteRule Create( RewriteRequestTemplate[] upstreams, RewriteRequestTemplate downstream )
     {
       return new RewriteRule( upstreams, downstream );
@@ -73,6 +109,11 @@ namespace Ivony.Http.Pipeline.Routes
 
 
 
+    /// <summary>
+    /// create a route rewrite rule
+    /// </summary>
+    /// <param name="templates">matching and rewriting templates. the last template will be used as a rewriting template, and other templates will be used as matching template</param>
+    /// <returns>RouteRewriteRule instance</returns>
     public static RewriteRule Create( params string[] templates )
     {
       if ( templates.Length == 0 )
@@ -83,6 +124,11 @@ namespace Ivony.Http.Pipeline.Routes
     }
 
 
+    /// <summary>
+    /// create a route rewrite rule
+    /// </summary>
+    /// <param name="templates">matching and rewriting templates. the last template will be used as a rewriting template, and other templates will be used as matching template</param>
+    /// <returns>RouteRewriteRule instance</returns>
     public static RewriteRule Create( params RewriteRequestTemplate[] templates )
     {
       if ( templates.Length == 0 )
@@ -102,10 +148,10 @@ namespace Ivony.Http.Pipeline.Routes
 
 
     /// <summary>
-    /// 产生路由值
+    /// match request and create route values
     /// </summary>
-    /// <param name="requestData"></param>
-    /// <returns></returns>
+    /// <param name="requestData">request data</param>
+    /// <returns>route values</returns>
     public IReadOnlyDictionary<string, string> Match( RouteRequestData requestData )
     {
 

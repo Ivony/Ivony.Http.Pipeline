@@ -15,8 +15,10 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// create HttpPipelineRouteData instance.
     /// </summary>
+    /// <param name="overridedRouteData">overrided route data that upstream pipeline created, if exists</param>
+    /// <param name="router">router that created this route data</param>
+    /// <param name="rule">route rule that created this route data</param>
     /// <param name="values">route values.</param>
-    /// <param name="pipeline">route pipeline.</param>
     internal HttpPipelineRouteData( HttpPipelineRouteData overridedRouteData, HttpPipelineRouter router, IHttpPipelineRouteRule rule, IEnumerable<KeyValuePair<string, string>> values )
     {
       OverridedRouteData = overridedRouteData;

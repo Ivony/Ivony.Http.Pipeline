@@ -9,14 +9,17 @@ using System.Text.RegularExpressions;
 
 namespace Ivony.Http.Pipeline.Routes
 {
+  /// <summary>
+  /// contains request data for use by the routing system.
+  /// </summary>
   public sealed class RouteRequestData
   {
 
 
     /// <summary>
-    /// 创建 RouteRequestData 对象
+    /// create RouteRequestData instance.
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="request">request message</param>
     public RouteRequestData( HttpRequestMessage request )
     {
       Path = PathSegments.Create( request.RequestUri.AbsolutePath );
@@ -26,11 +29,6 @@ namespace Ivony.Http.Pipeline.Routes
     }
 
 
-    /// <summary>
-    /// 解析 QueryString
-    /// </summary>
-    /// <param name="query">查询字符串</param>
-    /// <returns>解析后的结果</returns>
     private IEnumerable<(string name, string value)> ParseQueryString( string query )
     {
       if ( query == null )
@@ -86,7 +84,7 @@ namespace Ivony.Http.Pipeline.Routes
     }
 
     /// <summary>
-    /// 协议
+    /// request scheme
     /// </summary>
     public string Scheme { get; }
 

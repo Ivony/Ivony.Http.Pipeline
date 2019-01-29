@@ -7,6 +7,8 @@
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/Ivony/Ivony.Http.Pipeline</PackageProjectUrl>
     <Copyright>copyright Ivony</Copyright>
+    <IncludeSource>true</IncludeSource>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageTags>http pipeline forward proxy apigateway gateway rewrite route dotnetcore</PackageTags>
     <Description>The Http Pipeline is a HTTP request handler similar to a pipeline.
 

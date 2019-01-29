@@ -92,8 +92,8 @@ namespace Ivony.Http.Pipeline.Routes
         if ( values == null )
           return null;
 
-        foreach ( var pair in values )
-          routeValues.Add( pair.key, pair.value );
+        foreach ( var (key, value) in values )
+          routeValues.Add( key, value );
       }
 
 
@@ -123,6 +123,7 @@ namespace Ivony.Http.Pipeline.Routes
     }
 
 
+#pragma warning disable IDE0017 // 简化对象初始化
     public HttpRequestMessage RewriteRequest( HttpRequestMessage request, IReadOnlyDictionary<string, string> routeValues )
     {
 
@@ -141,6 +142,7 @@ namespace Ivony.Http.Pipeline.Routes
 
       return request;
     }
+#pragma warning restore IDE0017 // 简化对象初始化
 
   }
 }
