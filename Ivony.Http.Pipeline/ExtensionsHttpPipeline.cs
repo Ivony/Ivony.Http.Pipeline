@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -211,13 +212,48 @@ namespace Ivony.Http.Pipeline
 
 
     /// <summary>
-    /// insert a request logger to pipeline
+    /// trace request with diagnostic listener to pipeline
     /// </summary>
     /// <param name="pipeline">HTTP pipeline</param>
+    /// <param name="listener">diagnostic listener</param>
     /// <returns>new HTTP pipeline</returns>
-    public static IHttpPipeline UseLogger( this IHttpPipeline pipeline )
+    public static IHttpPipeline UseDiagnosticListener( this IHttpPipeline pipeline, DiagnosticListener listener )
     {
-      throw new NotImplementedException();
+      return pipeline.Join( handler => new HttpHandlerWithDiagnosticListener( listener, handler ) );
+    }
+
+
+    private class HttpHandlerWithDiagnosticListener : IHttpPipelineHandler
+    {
+      private readonly DiagnosticListener _listener;
+      private readonly IHttpPipelineHandler _handler;
+
+      public HttpHandlerWithDiagnosticListener( DiagnosticListener listener, IHttpPipelineHandler handler )
+      {
+        _listener = listener ?? throw new ArgumentNullException( nameof( listener ) );
+        _handler = handler ?? throw new ArgumentNullException( nameof( handler ) );
+      }
+
+      public async ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+      {
+        var activity = (Activity) null;
+
+        if ( _listener.IsEnabled() )
+          activity = new Activity( request.RequestUri.AbsoluteUri );
+
+
+        if ( activity != null )
+          _listener.StartActivity( activity, request );
+
+        var response = await _handler.ProcessRequest( request );
+
+        if ( activity != null )
+          _listener.StopActivity( activity, response );
+
+
+        return response;
+
+      }
     }
 
 
