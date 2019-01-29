@@ -9,7 +9,7 @@ namespace Ivony.Http.Pipeline
 
 
   /// <summary>
-  /// 提供 HTTP 请求管线的帮助方法
+  /// provide extension methods for IHttpPipeline
   /// </summary>
   public static class ExtensionsHttpPipeline
   {
@@ -153,33 +153,33 @@ namespace Ivony.Http.Pipeline
 
 
     /// <summary>
-    /// 使用负载均衡器
+    /// use load balancer
     /// </summary>
-    /// <param name="pipeline">上游管线</param>
-    /// <param name="pipelines">下游管线列表</param>
-    /// <returns>请求处理管线</returns>
+    /// <param name="pipeline">upstream pipeline</param>
+    /// <param name="pipelines">downstream pipelines</param>
+    /// <returns>HTTP pipeline</returns>
     public static IHttpPipeline UseLoadBalancer( this IHttpPipeline pipeline, params IHttpPipeline[] pipelines )
     {
       return pipeline.Join( new HttpPipelineLoadBalancer( pipelines ) );
     }
 
     /// <summary>
-    /// 使用负载均衡器
+    /// use load balancer
     /// </summary>
-    /// <param name="pipeline">上游管线</param>
-    /// <param name="pipelines">下游管线列表</param>
-    /// <returns>请求处理管线</returns>
+    /// <param name="pipeline">upstream pipeline</param>
+    /// <param name="pipelines">downstream pipelines</param>
+    /// <returns>HTTP pipeline</returns>
     public static IHttpPipeline UseLoadBalancer( this IHttpPipeline pipeline, params Func<IHttpPipeline, IHttpPipeline>[] pipelinesFactories )
     {
       return pipeline.Join( new HttpPipelineLoadBalancer( pipelinesFactories.Select( f => f( pipeline ) ).ToArray() ) );
     }
 
     /// <summary>
-    /// 分发管线
+    /// distribute pipeline
     /// </summary>
-    /// <param name="pipeline">上游管线</param>
-    /// <param name="distributer">分发器</param>
-    /// <returns>请求处理管线</returns>
+    /// <param name="pipeline">upstream pipeline</param>
+    /// <param name="distributer">The distributor responsible for distributing to different downstream pipelines</param>
+    /// <returns>HTTP pipeline</returns>
     public static IHttpPipelineHandler Distribute( this IHttpPipeline pipeline, IHttpPipelineDistributer distributer )
     {
       if ( distributer == null )
@@ -189,11 +189,11 @@ namespace Ivony.Http.Pipeline
     }
 
     /// <summary>
-    /// 分发管线
+    /// distribute pipeline
     /// </summary>
-    /// <param name="middleware">上游管线</param>
-    /// <param name="pipelines">下游管线列表</param>
-    /// <returns>请求处理管线</returns>
+    /// <param name="pipeline">upstream pipeline</param>
+    /// <param name="pipelines">downstream pipelines</param>
+    /// <returns>HTTP pipeline</returns>
     public static IHttpPipelineHandler Distribute( this IHttpPipeline pipeline, params IHttpPipelineHandler[] pipelines )
     {
       if ( pipelines == null )
