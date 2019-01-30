@@ -10,11 +10,12 @@ namespace Ivony.Http.Pipeline
 {
 
   /// <summary>
-  /// http load balancer implements
+  /// HTTP load balancer implements
   /// </summary>
   public class HttpPipelineLoadBalancer : IHttpPipeline
   {
     private readonly IHttpPipeline[] _pipelines;
+
 
     public HttpPipelineLoadBalancer( params IHttpPipeline[] pipelines )
     {

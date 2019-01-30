@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline.Tunnel
 {
   public interface IHttpTunnel
   {
 
-    Stream WriteStream { get; }
-
-    Stream ReadStream { get; }
+    ValueTask<IHttpTunnelConnection> GetConnection( CancellationToken cancellationToken = default( CancellationToken ) );
 
   }
 }

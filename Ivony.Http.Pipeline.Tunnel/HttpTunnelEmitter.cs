@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline.Tunnel
 {
-  public class HttpTunnelEmitter
+  public class HttpTunnelEmitter : IHttpPipelineEmitter
   {
 
     public HttpTunnelEmitter( IHttpTunnel tunnel, IHttpRequestSerializer requestSerializer, IHttpResponseSerializer responseSerializer )
@@ -19,5 +21,15 @@ namespace Ivony.Http.Pipeline.Tunnel
     public IHttpRequestSerializer RequestSerializer { get; }
 
     public IHttpResponseSerializer ResponseSerializer { get; }
+
+    public async ValueTask<HttpResponseMessage> EmitRequest( HttpRequestMessage request )
+    {
+
+      using ( var connection = await Tunnel.GetConnection() )
+      {
+        await RequestSerializer.SerializeAsync( request, await connection.GetWriteStream() );
+        return await ResponseSerializer.DeserializeAsync( await connection.GetReadStream() );
+      }
+    }
   }
 }
