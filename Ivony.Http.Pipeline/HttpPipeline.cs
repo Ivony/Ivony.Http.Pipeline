@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline
@@ -31,9 +32,9 @@ namespace Ivony.Http.Pipeline
 
 
     /// <summary>
-    /// 通过方法创建一个 IHttpPipeline 对象
+    /// create a <see cref="IHttpPipeline"/> object by process method.
     /// </summary>
-    /// <param name="pipeline">一个处理管线方法</param>
+    /// <param name="pipeline">a method to process http pipeline</param>
     /// <returns></returns>
     public static IHttpPipeline Create( Func<IHttpPipelineHandler, IHttpPipelineHandler> pipeline )
     {
@@ -44,12 +45,12 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// 派生类重写此方法处理请求
     /// </summary>
-    /// <param name="request">请求信息</param>
+    /// <param name="request">request infomation</param>
     /// <param name="downstream">downstream pipeline request handler</param>
-    /// <returns>响应信息</returns>
-    protected virtual ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, IHttpPipelineHandler downstream )
+    /// <returns>response information</returns>
+    protected virtual ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, IHttpPipelineHandler downstream, CancellationToken cancellationToken )
     {
-      return downstream.ProcessRequest( request );
+      return downstream.ProcessRequest( request, cancellationToken );
     }
 
 
@@ -72,9 +73,9 @@ namespace Ivony.Http.Pipeline
         _downstream = downstream;
       }
 
-      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, CancellationToken cancellationToken )
       {
-        return _pipeline.ProcessRequest( request, _downstream );
+        return _pipeline.ProcessRequest( request, _downstream, cancellationToken );
       }
     }
 

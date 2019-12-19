@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline
@@ -13,11 +14,11 @@ namespace Ivony.Http.Pipeline
       _func = func ?? throw new ArgumentNullException( nameof( func ) );
     }
 
-    protected override ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, IHttpPipelineHandler downstream )
+    protected override ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, IHttpPipelineHandler downstream, CancellationToken cancellationToken )
     {
 
       request = _func( request );
-      return downstream.ProcessRequest( request );
+      return downstream.ProcessRequest( request, cancellationToken );
 
     }
   }

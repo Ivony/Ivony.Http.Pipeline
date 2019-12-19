@@ -35,11 +35,11 @@ namespace Ivony.Http.Pipeline.Tunnel
 
         var connection = await Tunnel.GetConnection( cancellationToken );
 
-        Task.Run( async () =>
+        var task = Task.Run( async () =>
         {
           var request = await RequestSerializer.DeserializerAsync( await connection.GetReadStream( cancellationToken ) );
           var response = await Handler.ProcessRequest( request );
-          await ResponseSerializer.Serialize( response, await connection.GetWriteStream( cancellationToken ) );
+          await ResponseSerializer.SerializeAsync( response, await connection.GetWriteStream( cancellationToken ) );
 
         }, cancellationToken );
 

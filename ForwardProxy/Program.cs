@@ -37,8 +37,11 @@ namespace ForwardProxy
           .UseRouter( routes => routes
             .Rewrite( "//nl.miworldtech.com/{path*}", "http://omsapi.miworldtech.com/{path}" )
             .Rewrite( "//nl.label.miworldtech.com/{path*}", "http://omsapilabel.miworldtech.com/{path}" )
+            .Rewrite( "//us.yunexpress.com/order/{path*}", "http://omsapi.miworldtech.com/{path}" )
+            .Rewrite( "//us.yunexpress.com/label/{path*}", "http://omsapilabel.miworldtech.com/{path}" )
             .Rewrite( "//nl.yunexpress.com/order/{path*}", "http://omsapi.miworldtech.com/{path}" )
             .Rewrite( "//nl.yunexpress.com/label/{path*}", "http://omsapilabel.miworldtech.com/{path}" )
+            .Rewrite( "//hkapi.miworldtech.com/{path*}", "http://api2.miworldtech.com/{path}" )
             .Otherwise( new HttpNotFound() )
           )
           .Emit();

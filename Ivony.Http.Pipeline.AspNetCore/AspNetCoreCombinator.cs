@@ -121,7 +121,21 @@ namespace Ivony.Http.Pipeline
       {
         var request = await CreateRequest( context );
 
-        var response = await pipeline.ProcessRequest( request );
+
+        HttpResponseMessage response;
+        try
+        {
+          response = await pipeline.ProcessRequest( request, context.RequestAborted );
+        }
+        catch ( OperationCanceledException )
+        {
+          throw;
+        }
+        catch
+        {
+          context.Response.StatusCode = 502;
+          return;
+        }
 
         await ApplyResponse( context, response );
       };

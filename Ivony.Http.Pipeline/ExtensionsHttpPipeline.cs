@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline
@@ -30,15 +31,16 @@ namespace Ivony.Http.Pipeline
     private class DistributerHandler : IHttpPipelineHandler
     {
       private readonly IHttpPipelineDistributer _distributer;
+      private readonly CancellationToken _cancellationToken;
 
       public DistributerHandler( IHttpPipelineDistributer distributer )
       {
         _distributer = distributer;
       }
 
-      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, CancellationToken cancellationToken )
       {
-        return _distributer.Distribute( request ).ProcessRequest( request );
+        return _distributer.Distribute( request ).ProcessRequest( request, cancellationToken );
       }
     }
 
@@ -239,7 +241,7 @@ namespace Ivony.Http.Pipeline
         _handler = handler ?? throw new ArgumentNullException( nameof( handler ) );
       }
 
-      public async ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+      public async ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, CancellationToken cancellationToken )
       {
         var activity = (Activity) null;
 
@@ -250,7 +252,7 @@ namespace Ivony.Http.Pipeline
         if ( activity != null )
           _listener.StartActivity( activity, request );
 
-        var response = await _handler.ProcessRequest( request );
+        var response = await _handler.ProcessRequest( request, cancellationToken );
 
         if ( activity != null )
           _listener.StopActivity( activity, response );
@@ -325,9 +327,9 @@ namespace Ivony.Http.Pipeline
         _emitter = emitter;
       }
 
-      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, CancellationToken cancellationToken )
       {
-        return _emitter.EmitRequest( request );
+        return _emitter.EmitRequest( request, cancellationToken );
       }
     }
 
