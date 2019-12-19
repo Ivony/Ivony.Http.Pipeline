@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline.Tunnel
@@ -22,13 +23,13 @@ namespace Ivony.Http.Pipeline.Tunnel
 
     public IHttpResponseSerializer ResponseSerializer { get; }
 
-    public async ValueTask<HttpResponseMessage> EmitRequest( HttpRequestMessage request )
+    public async ValueTask<HttpResponseMessage> EmitRequest( HttpRequestMessage request, CancellationToken cancellationToken )
     {
 
       using ( var connection = await Tunnel.GetConnection() )
       {
-        await RequestSerializer.SerializeAsync( request, await connection.GetWriteStream() );
-        return await ResponseSerializer.DeserializeAsync( await connection.GetReadStream() );
+        await RequestSerializer.SerializeAsync( request, await connection.GetWriteStream(), cancellationToken );
+        return await ResponseSerializer.DeserializeAsync( await connection.GetReadStream(), cancellationToken );
       }
     }
   }

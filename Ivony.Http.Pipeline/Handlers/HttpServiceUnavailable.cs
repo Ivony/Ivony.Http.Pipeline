@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline.Handlers
@@ -19,7 +20,7 @@ namespace Ivony.Http.Pipeline.Handlers
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public override ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+    public override ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, CancellationToken cancellationToken )
     {
       return Result( Response( HttpStatusCode.ServiceUnavailable ) );
     }

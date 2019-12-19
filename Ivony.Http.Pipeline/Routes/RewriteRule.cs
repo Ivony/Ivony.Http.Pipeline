@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline.Routes
@@ -212,10 +213,10 @@ namespace Ivony.Http.Pipeline.Routes
         this._handler = handler;
       }
 
-      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+      public ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, CancellationToken cancellationToken )
       {
         request = _rewriter.Rewrite( request );
-        return _handler.ProcessRequest( request );
+        return _handler.ProcessRequest( request, cancellationToken );
       }
     }
 

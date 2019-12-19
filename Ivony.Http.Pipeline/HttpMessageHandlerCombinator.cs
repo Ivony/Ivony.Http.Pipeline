@@ -37,7 +37,7 @@ namespace Ivony.Http.Pipeline
 
       protected override Task<HttpResponseMessage> SendAsync( HttpRequestMessage request, CancellationToken cancellationToken )
       {
-        return Handler.ProcessRequest( request ).AsTask();
+        return Handler.ProcessRequest( request, cancellationToken ).AsTask();
       }
     }
   }

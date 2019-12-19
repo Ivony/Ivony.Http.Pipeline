@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline.Handlers
@@ -12,7 +13,7 @@ namespace Ivony.Http.Pipeline.Handlers
   /// </summary>
   public class HttpUnauthorized : HttpSpecifiedHandlerBase
   {
-    public override ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request )
+    public override ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, CancellationToken cancellationToken )
     {
 
       return Result( Response( HttpStatusCode.Unauthorized ) );

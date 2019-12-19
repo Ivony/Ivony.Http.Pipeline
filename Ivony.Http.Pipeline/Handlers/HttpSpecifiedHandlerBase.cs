@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ivony.Http.Pipeline.Handlers
@@ -20,7 +21,7 @@ namespace Ivony.Http.Pipeline.Handlers
     /// </summary>
     /// <param name="request">http request</param>
     /// <returns>http response</returns>
-    public abstract ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request );
+    public abstract ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, CancellationToken cancellationToken );
 
 
     /// <summary>
