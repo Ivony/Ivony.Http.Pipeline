@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
 namespace Ivony.Http.Pipeline
@@ -17,6 +19,14 @@ namespace Ivony.Http.Pipeline
   public class AspNetCoreCombinator : IHttpPipelineAccessPoint<RequestDelegate>
   {
     internal static readonly string HttpContextAccessKey = "__HttpContext";
+
+    private readonly IAspNetCoreExceptionHandler _exceptionHandler;
+
+
+    public AspNetCoreCombinator( IAspNetCoreExceptionHandler exceptionHandler )
+    {
+      _exceptionHandler = exceptionHandler;
+    }
 
 
     protected virtual async Task ApplyResponse( HttpContext context, HttpResponseMessage response )
@@ -49,7 +59,13 @@ namespace Ivony.Http.Pipeline
         context.Response.Headers.Add( item.Key, new StringValues( item.Value.ToArray() ) );
       }
 
-      await response.Content.CopyToAsync( context.Response.Body );
+
+      if ( response.StatusCode != HttpStatusCode.NoContent
+        && response.StatusCode != HttpStatusCode.ResetContent
+        && response.StatusCode != HttpStatusCode.NotModified
+        && response.Content != null
+        )
+        await response.Content.CopyToAsync( context.Response.Body );
 
     }
 
@@ -85,7 +101,6 @@ namespace Ivony.Http.Pipeline
 
 
     protected readonly static HashSet<string> ignoreHeaders = new HashSet<string>( StringComparer.OrdinalIgnoreCase ) { "Accept-Encoding", "Connection", "Content-Encoding", "Content-Length", "Keep-Alive", "Transfer-Encoding", "TE", "Accept-Transfer-Encoding", "Trailer", "Upgrade", "Proxy-Authorization", "Proxy-Authenticate" };
-
 
     protected virtual Uri CreateUri( HttpRequest request )
     {
@@ -131,9 +146,9 @@ namespace Ivony.Http.Pipeline
         {
           throw;
         }
-        catch
+        catch ( Exception e )
         {
-          context.Response.StatusCode = 502;
+          await _exceptionHandler.HandleExceptionAsync( context, e );
           return;
         }
 
