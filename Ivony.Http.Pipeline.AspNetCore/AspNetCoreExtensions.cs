@@ -83,29 +83,13 @@ namespace Microsoft.AspNetCore.Hosting
     /// <summary>
     /// forward request to downstream pipeline
     /// </summary>
-    /// <param name="pipeline">upstream pipeline</param>
+    /// <param name="builder">asp.net core application builder</param>
+    /// <param name="proxyMode">forward proxy mode</param>
     /// <returns>pipeline</returns>
-    public static IHttpPipeline Forward( this IApplicationBuilder application )
+    public static IHttpPipeline Forward( this IApplicationBuilder builder, ForwardProxyMode proxyMode = ForwardProxyMode.None )
     {
-      return application.UsePipeline( new AspNetCoreForwardProxy( ForwardProxyMode.None ) );
+      return builder.UsePipeline( AspNetCoreForwardProxy.CreateInstance( builder.ApplicationServices, proxyMode ) );
     }
-
-    /// <summary>
-    /// forward request to downstream pipeline and add forward proxy headers
-    /// </summary>
-    /// <param name="pipeline">upstream pipeline</param>
-    /// <param name="transmit">transmit headers behavior</param>
-    /// <param name="proxyMode">build proxy headers behavior</param>
-    /// <returns>pipeline</returns>
-    public static IHttpPipeline ForwardProxy( this IApplicationBuilder application, ForwardProxyMode proxyMode = ForwardProxyMode.Legacy )
-    {
-      return application.UsePipeline( new AspNetCoreForwardProxy( proxyMode ) );
-    }
-
-
-
-
-
 
 
 
@@ -144,24 +128,5 @@ namespace Microsoft.AspNetCore.Hosting
       var accessPoint = builder.ApplicationServices.GetRequiredService<IHttpPipelineAccessPoint<RequestDelegate>>();
       builder.Run( accessPoint.Combine( pipeline ) );
     }
-
-
-    /// <summary>
-    /// run asp.net core site with pipeline.
-    /// </summary>
-    /// <param name="builder">asp.net core application builder</param>
-    /// <param name="configure">HTTP pipeline configure</param>
-    public static void RunPipeline( this IApplicationBuilder builder, Action<AspNetCorePipelineBuilder> configure )
-    {
-      var pipelineBuilder = new AspNetCorePipelineBuilder();
-      configure( pipelineBuilder );
-      if ( pipelineBuilder.Application == null )
-        throw new InvalidOperationException( "HTTP pipeline is not completed yet." );
-
-      else
-        builder.Run( pipelineBuilder.Application );
-
-    }
-
   }
 }

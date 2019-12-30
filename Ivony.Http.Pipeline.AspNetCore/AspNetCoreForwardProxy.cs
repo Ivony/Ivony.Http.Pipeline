@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ivony.Http.Pipeline
 {
@@ -30,7 +31,7 @@ namespace Ivony.Http.Pipeline
   public class AspNetCoreForwardProxy : AspNetCoreCombinator
   {
 
-    public AspNetCoreForwardProxy( ForwardProxyMode forwardProxyMode )
+    public AspNetCoreForwardProxy( ForwardProxyMode forwardProxyMode, IAspNetCoreExceptionHandler exceptionHandler ) : base( exceptionHandler )
     {
       ForwardProxyMode = forwardProxyMode;
     }
@@ -61,6 +62,12 @@ namespace Ivony.Http.Pipeline
 
 
       return request;
+    }
+
+    internal static AspNetCoreForwardProxy CreateInstance( IServiceProvider serviceProvider, ForwardProxyMode mode )
+    {
+      return ActivatorUtilities.CreateInstance<AspNetCoreForwardProxy>( serviceProvider, mode );
+
     }
   }
 }
