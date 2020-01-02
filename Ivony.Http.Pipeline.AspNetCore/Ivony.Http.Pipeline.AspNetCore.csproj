@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <RootNamespace>Ivony.Http.Pipeline</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.4.2</Version>
+    <Version>0.0.4.3</Version>
     <Authors>Ivony</Authors>
     <Description>HttpPipeline for aspnet core.</Description>
     <PackageLicenseUrl></PackageLicenseUrl>

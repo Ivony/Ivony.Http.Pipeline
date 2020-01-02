@@ -11,6 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection
     public static IServiceCollection AddHttpPipeline( this IServiceCollection services )
     {
       services.AddSingleton<IHttpPipelineEmitter, HttpPipelineEmitter>();
+      services.AddSingleton<IAspNetCoreExceptionHandler, AspNetCoreExceptionHandler>();
       services.AddSingleton<IHttpPipelineAccessPoint<RequestDelegate>, AspNetCoreCombinator>();
 
       return services;

@@ -48,6 +48,9 @@ namespace Ivony.Http.Pipeline
         context.Response.Headers.Add( item.Key, new StringValues( item.Value.ToArray() ) );
       }
 
+      if ( response.Content == null )
+        return;
+
       foreach ( var item in response.Content.Headers )
       {
         if ( ignoreHeaders.Contains( item.Key ) )
