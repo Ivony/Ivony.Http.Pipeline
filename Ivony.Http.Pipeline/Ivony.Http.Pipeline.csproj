@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Version>0.0.4.1</Version>
+    <Version>0.0.5</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Ivony/Ivony.Http.Pipeline</PackageProjectUrl>
     <Copyright>copyright Ivony</Copyright>
