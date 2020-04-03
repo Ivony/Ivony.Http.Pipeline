@@ -48,7 +48,7 @@ namespace Ivony.Http.Pipeline
         request.Headers.Host = request.RequestUri.Host;
 
 
-      if ( Options.DisableRequestChunked )
+      if ( Options.EnableRequestChunked == false )
       {
         request.Content = await TryBufferContent( request.Content );
         request.Headers.TransferEncodingChunked = false;
@@ -60,16 +60,16 @@ namespace Ivony.Http.Pipeline
       {
         response = await Options.HttpClient.SendAsync( request );
       }
-      catch ( OperationCanceledException )
+      catch ( Exception e )
       {
-        throw;
-      }
-      catch
-      {
-        return BadGateway();
+        if ( e is OperationCanceledException )
+          return Timeout( e );
+
+        else
+          return BadGateway( e );
       }
 
-      if ( Options.DisableResponseChunked )
+      if ( Options.EnableResponseChunked == false )
       {
         response.Content = await TryBufferContent( response.Content );
         response.Headers.TransferEncodingChunked = false;
@@ -83,14 +83,35 @@ namespace Ivony.Http.Pipeline
       return response;
     }
 
-    private HttpResponseMessage BadGateway()
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="exception"></param>
+    /// <returns></returns>
+    protected virtual HttpResponseMessage BadGateway( Exception exception )
     {
-      return new HttpResponseMessage( HttpStatusCode.BadGateway );
+
+      var response = new HttpResponseMessage( HttpStatusCode.BadGateway );
+
+      if ( Options.EnableDetailedException )
+        response.Content = new StringContent( exception.ToString() );
+
+      return response;
     }
 
-    private HttpResponseMessage Timeout()
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="exception"></param>
+    /// <returns></returns>
+    protected HttpResponseMessage Timeout( Exception exception )
     {
-      return new HttpResponseMessage( HttpStatusCode.GatewayTimeout );
+      var response = new HttpResponseMessage( HttpStatusCode.GatewayTimeout );
+
+      if ( Options.EnableDetailedException )
+        response.Content = new StringContent( exception.ToString() );
+
+      return response;
     }
 
     private async ValueTask<HttpContent> TryBufferContent( HttpContent content )

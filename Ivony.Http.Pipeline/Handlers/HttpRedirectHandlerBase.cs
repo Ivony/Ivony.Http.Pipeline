@@ -14,7 +14,7 @@ namespace Ivony.Http.Pipeline.Handlers
   {
 
     /// <summary>
-    /// create HttpRedirectHandlerBase instance
+    /// create <see cref="HttpRedirectHandlerBase"/> instance
     /// </summary>
     /// <param name="rule">rewrite rule for redirect</param>
     protected HttpRedirectHandlerBase( RewriteRule rule )
@@ -29,7 +29,12 @@ namespace Ivony.Http.Pipeline.Handlers
     public RewriteRule RewriteRule { get; }
 
 
-
+    /// <summary>
+    /// create HTTP redirect response
+    /// </summary>
+    /// <param name="request">HTTP request message</param>
+    /// <param name="statusCode">HTTP Status Code, only accept 301 and 302</param>
+    /// <returns>HTTP redirect response</returns>
     protected HttpResponseMessage Redirect( HttpRequestMessage request, HttpStatusCode statusCode )
     {
       var _code = (int) statusCode;

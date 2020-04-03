@@ -16,7 +16,8 @@ namespace Ivony.Http.Pipeline.Handlers
     /// handle request and response HTTP 403
     /// </summary>
     /// <param name="request">HTTP request message</param>
-    /// <returns>response</returns>
+    /// <param name="cancellationToken">cancellation token</param>
+    /// <returns>HTTP 403 response</returns>
     public override ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, CancellationToken cancellationToken )
     {
       return Result( Response( HttpStatusCode.Forbidden ) );

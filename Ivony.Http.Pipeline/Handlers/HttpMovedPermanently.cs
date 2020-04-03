@@ -26,6 +26,7 @@ namespace Ivony.Http.Pipeline.Handlers
     /// handle request and response HTTP 301 Moved Permanently
     /// </summary>
     /// <param name="request">HTTP request message</param>
+    /// <param name="cancellationToken">cancellation token</param>
     /// <returns>response</returns>
     public override ValueTask<HttpResponseMessage> ProcessRequest( HttpRequestMessage request, CancellationToken cancellationToken )
     {

@@ -40,17 +40,22 @@ namespace Ivony.Http.Pipeline
     /// <summary>
     /// 禁用请求分块传输，设置为true将强行将请求内容一次性传输
     /// </summary>
-    public bool DisableRequestChunked { get; set; } = true;
+    public bool EnableRequestChunked { get; set; } = false;
 
     /// <summary>
     /// 禁用响应分块传输，设置为true将强行将响应内容一次性读取
     /// </summary>
-    public bool DisableResponseChunked { get; set; } = true;
+    public bool EnableResponseChunked { get; set; } = false;
 
     /// <summary>
     /// 使得 Host 头和 RequestUri 保持一致
     /// </summary>
     public bool ConformHost { get; set; } = true;
+
+    /// <summary>
+    /// write detailed exception message in response body.
+    /// </summary>
+    public bool EnableDetailedException { get; set; } = true;
 
   }
 }
