@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
@@ -19,13 +21,14 @@ namespace Ivony.Http.Pipeline
   public class AspNetCoreCombinator : IHttpPipelineAccessPoint<RequestDelegate>
   {
     internal static readonly string HttpContextAccessKey = "__HttpContext";
-
+    private readonly ILogger<AspNetCoreCombinator> _logger;
     private readonly IAspNetCoreExceptionHandler _exceptionHandler;
 
 
-    public AspNetCoreCombinator( IAspNetCoreExceptionHandler exceptionHandler )
+    public AspNetCoreCombinator( IServiceProvider serviceProvider )
     {
-      _exceptionHandler = exceptionHandler;
+      _logger = serviceProvider.GetRequiredService<ILogger<AspNetCoreCombinator>>();
+      _exceptionHandler = serviceProvider.GetRequiredService<IAspNetCoreExceptionHandler>();
     }
 
 
@@ -35,41 +38,62 @@ namespace Ivony.Http.Pipeline
       context.Response.StatusCode = (int) response.StatusCode;
       context.Response.Headers.Clear();
 
+
+
       var ignores = response.Headers.Connection;
+      var exceptions = new List<Exception>();
 
-      foreach ( var item in response.Headers )
-      {
-        if ( ignoreHeaders.Contains( item.Key ) )
-          continue;
-
-        if ( ignores.Contains( item.Key ) )
-          continue;
-
-        context.Response.Headers.Add( item.Key, new StringValues( item.Value.ToArray() ) );
-      }
+      ApplyHeaders( response.Headers );
 
       if ( response.Content == null )
         return;
 
-      foreach ( var item in response.Content.Headers )
+      ApplyHeaders( response.Content.Headers );
+
+
+
+      if ( exceptions.Any() )
       {
-        if ( ignoreHeaders.Contains( item.Key ) )
-          continue;
+        _logger.LogError( new AggregateException( exceptions ).ToString() );
+      }
 
-        if ( ignores.Contains( item.Key ) )
-          continue;
+      try
+      {
 
-        context.Response.Headers.Add( item.Key, new StringValues( item.Value.ToArray() ) );
+        if ( response.StatusCode != HttpStatusCode.NoContent
+          && response.StatusCode != HttpStatusCode.ResetContent
+          && response.StatusCode != HttpStatusCode.NotModified
+          && response.Content != null
+          )
+          await response.Content.CopyToAsync( context.Response.Body );
+      }
+      catch ( Exception e )
+      {
+        throw new Exception( $"apply response body failed.", e );
       }
 
 
-      if ( response.StatusCode != HttpStatusCode.NoContent
-        && response.StatusCode != HttpStatusCode.ResetContent
-        && response.StatusCode != HttpStatusCode.NotModified
-        && response.Content != null
-        )
-        await response.Content.CopyToAsync( context.Response.Body );
+      void ApplyHeaders( HttpHeaders headers )
+      {
+        foreach ( var item in headers )
+        {
+          if ( ignoreHeaders.Contains( item.Key ) )
+            continue;
 
+          if ( ignores.Contains( item.Key ) )
+            continue;
+
+          try
+          {
+            context.Response.Headers.Add( item.Key, new StringValues( item.Value.ToArray() ) );
+          }
+          catch ( Exception e )
+          {
+            exceptions.Add( new Exception( $"apply header {item.Key} failed.", e ) );
+
+          }
+        }
+      }
     }
 
 

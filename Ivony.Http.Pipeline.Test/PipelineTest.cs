@@ -16,7 +16,7 @@ namespace Ivony.Http.Pipeline.Test
     [TestMethod]
     public void DymmyPipeline()
     {
-      var combinator = new AspNetCoreCombinator();
+      var combinator = new AspNetCoreCombinator( null );
       var pipeline = combinator.AsPipeline( application => { } );
 
 

@@ -31,7 +31,7 @@ namespace Ivony.Http.Pipeline
   public class AspNetCoreForwardProxy : AspNetCoreCombinator
   {
 
-    public AspNetCoreForwardProxy( ForwardProxyMode forwardProxyMode, IAspNetCoreExceptionHandler exceptionHandler ) : base( exceptionHandler )
+    public AspNetCoreForwardProxy( ForwardProxyMode forwardProxyMode, IServiceProvider serviceProvider ) : base( serviceProvider )
     {
       ForwardProxyMode = forwardProxyMode;
     }
@@ -62,12 +62,6 @@ namespace Ivony.Http.Pipeline
 
 
       return request;
-    }
-
-    internal static AspNetCoreForwardProxy CreateInstance( IServiceProvider serviceProvider, ForwardProxyMode mode )
-    {
-      return ActivatorUtilities.CreateInstance<AspNetCoreForwardProxy>( serviceProvider, mode );
-
     }
   }
 }

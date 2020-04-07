@@ -88,7 +88,7 @@ namespace Microsoft.AspNetCore.Hosting
     /// <returns>pipeline</returns>
     public static IHttpPipeline Forward( this IApplicationBuilder builder, ForwardProxyMode proxyMode = ForwardProxyMode.None )
     {
-      return builder.UsePipeline( AspNetCoreForwardProxy.CreateInstance( builder.ApplicationServices, proxyMode ) );
+      return builder.UsePipeline( new AspNetCoreForwardProxy( proxyMode, builder.ApplicationServices ) );
     }
 
 
