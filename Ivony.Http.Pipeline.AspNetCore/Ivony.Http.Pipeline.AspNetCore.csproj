@@ -12,10 +12,6 @@
   </PropertyGroup>
 
 
-  <PropertyGroup>
-    <PackageOutputPath Condition="'$(Configuration)' == 'Release'">D:\publish\nuget-public</PackageOutputPath>
-  </PropertyGroup>
-
   
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

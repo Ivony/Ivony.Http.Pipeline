@@ -5,14 +5,13 @@
 
   <PropertyGroup>
 
-    <Version>0.0.5</Version>
+    <Version>0.1.0</Version>
     <Authors>Ivony</Authors>
     <PackageProjectUrl>https://github.com/Ivony/Ivony.Http.Pipeline</PackageProjectUrl>
     <Copyright>copyright Ivony</Copyright>
     <PackageTags>http pipeline forward proxy apigateway gateway rewrite route aspnet aspnetcore dotnetcore</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageIconUrl>https://github.com/Ivony/Ivony.Http.Pipeline/raw/master/icon.png</PackageIconUrl>
-
     <RepositoryUrl>https://github.com/Ivony/Ivony.Http.Pipeline.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 

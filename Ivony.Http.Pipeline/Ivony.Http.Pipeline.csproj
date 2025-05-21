@@ -2,7 +2,6 @@
   <Import Project="../Project.props" />
 
   <PropertyGroup>
-    <Version>0.0.5</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Description>The Http Pipeline is a HTTP request handler similar to a pipeline.
 
